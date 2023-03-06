@@ -293,7 +293,7 @@ extern void irq253();
 extern void irq254();
 extern void irq255();
 
-typedef struct
+/*typedef struct
 {
     uint8_t rpl : 2;
     uint8_t ti : 1;
@@ -306,7 +306,7 @@ typedef struct
     uint8_t zero : 1;
     uint8_t dpl : 2;
     uint8_t p : 1;
-} __attribute__((packed)) type_attrib;
+} __attribute__((packed)) type_attrib;*/
 
 typedef struct
 {
@@ -317,9 +317,9 @@ typedef struct
 typedef struct
 {
     uint16_t offset_1; // Offset bits 0..15
-    segment_select selector; // A code segment selector in GDT or LDT
+    uint16_t selector; // A code segment selector in GDT or LDT
     uint8_t zero; // Unused, set to 0
-    type_attrib type_attributes; // Gate type, DP1 and P fields
+    uint8_t type_attributes; // Gate type, DP1 and P fields
     uint16_t offset_2; // Offset bits 16..31
 } __attribute__((packed)) idt_entry;
 
@@ -327,7 +327,7 @@ idt_entry idt_entries[256];
 
 void idt_add_table(uint32_t index, uint32_t offset)
 {
-    type_attrib type_attr = {
+    /*type_attrib type_attr = {
             .gate_type = 0b1110, // 32-bit interrupt gate
             .zero = 0b0,
             .dpl = 0b00, // Ring 0
@@ -338,13 +338,13 @@ void idt_add_table(uint32_t index, uint32_t offset)
             .rpl = 0b00, // Ring 0
             .ti = 0b0, // GDT
             .index = 0b0000000000001 // GDT entry index (32-bit code segment)
-    };
+    };*/
 
     idt_entry entry = {
             .offset_1 = (uint16_t)(offset & 0xFFFF),
-            .selector = segment_sel,
+            .selector = 0x08,
             .zero = 0,
-            .type_attributes = type_attr,
+            .type_attributes = 0x8E,
             .offset_2 = (uint16_t)((offset >> 16) & 0xFFFF)
     };
 
