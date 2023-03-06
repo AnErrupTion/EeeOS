@@ -12,6 +12,7 @@ irq0:
     push 0
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -23,6 +24,7 @@ irq1:
     push 1
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -34,6 +36,7 @@ irq2:
     push 2
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -45,6 +48,7 @@ irq3:
     push 3
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -56,6 +60,7 @@ irq4:
     push 4
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -67,6 +72,7 @@ irq5:
     push 5
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -78,6 +84,7 @@ irq6:
     push 6
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -89,6 +96,7 @@ irq7:
     push 7
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -100,6 +108,7 @@ irq8:
     push 8
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -111,6 +120,7 @@ irq9:
     push 9
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -122,6 +132,7 @@ irq10:
     push 10
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -133,6 +144,7 @@ irq11:
     push 11
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -144,6 +156,7 @@ irq12:
     push 12
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -155,6 +168,7 @@ irq13:
     push 13
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -166,6 +180,7 @@ irq14:
     push 14
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -177,6 +192,7 @@ irq15:
     push 15
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -188,6 +204,7 @@ irq16:
     push 16
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -199,6 +216,7 @@ irq17:
     push 17
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -210,6 +228,7 @@ irq18:
     push 18
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -221,6 +240,7 @@ irq19:
     push 19
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -232,6 +252,7 @@ irq20:
     push 20
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -243,6 +264,7 @@ irq21:
     push 21
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -254,6 +276,7 @@ irq22:
     push 22
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -265,6 +288,7 @@ irq23:
     push 23
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -276,6 +300,7 @@ irq24:
     push 24
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -287,6 +312,7 @@ irq25:
     push 25
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -298,6 +324,7 @@ irq26:
     push 26
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -309,6 +336,7 @@ irq27:
     push 27
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -320,6 +348,7 @@ irq28:
     push 28
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -331,6 +360,7 @@ irq29:
     push 29
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -342,6 +372,7 @@ irq30:
     push 30
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -353,6 +384,7 @@ irq31:
     push 31
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -364,6 +396,7 @@ irq32:
     push 32
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -375,6 +408,7 @@ irq33:
     push 33
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -386,6 +420,7 @@ irq34:
     push 34
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -397,6 +432,7 @@ irq35:
     push 35
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -408,6 +444,7 @@ irq36:
     push 36
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -419,6 +456,7 @@ irq37:
     push 37
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -430,6 +468,7 @@ irq38:
     push 38
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -441,6 +480,7 @@ irq39:
     push 39
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -452,6 +492,7 @@ irq40:
     push 40
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -463,6 +504,7 @@ irq41:
     push 41
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -474,6 +516,7 @@ irq42:
     push 42
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -485,6 +528,7 @@ irq43:
     push 43
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -496,6 +540,7 @@ irq44:
     push 44
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -507,6 +552,7 @@ irq45:
     push 45
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -518,6 +564,7 @@ irq46:
     push 46
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -529,6 +576,7 @@ irq47:
     push 47
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -540,6 +588,7 @@ irq48:
     push 48
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -551,6 +600,7 @@ irq49:
     push 49
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -562,6 +612,7 @@ irq50:
     push 50
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -573,6 +624,7 @@ irq51:
     push 51
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -584,6 +636,7 @@ irq52:
     push 52
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -595,6 +648,7 @@ irq53:
     push 53
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -606,6 +660,7 @@ irq54:
     push 54
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -617,6 +672,7 @@ irq55:
     push 55
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -628,6 +684,7 @@ irq56:
     push 56
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -639,6 +696,7 @@ irq57:
     push 57
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -650,6 +708,7 @@ irq58:
     push 58
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -661,6 +720,7 @@ irq59:
     push 59
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -672,6 +732,7 @@ irq60:
     push 60
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -683,6 +744,7 @@ irq61:
     push 61
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -694,6 +756,7 @@ irq62:
     push 62
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -705,6 +768,7 @@ irq63:
     push 63
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -716,6 +780,7 @@ irq64:
     push 64
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -727,6 +792,7 @@ irq65:
     push 65
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -738,6 +804,7 @@ irq66:
     push 66
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -749,6 +816,7 @@ irq67:
     push 67
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -760,6 +828,7 @@ irq68:
     push 68
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -771,6 +840,7 @@ irq69:
     push 69
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -782,6 +852,7 @@ irq70:
     push 70
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -793,6 +864,7 @@ irq71:
     push 71
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -804,6 +876,7 @@ irq72:
     push 72
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -815,6 +888,7 @@ irq73:
     push 73
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -826,6 +900,7 @@ irq74:
     push 74
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -837,6 +912,7 @@ irq75:
     push 75
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -848,6 +924,7 @@ irq76:
     push 76
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -859,6 +936,7 @@ irq77:
     push 77
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -870,6 +948,7 @@ irq78:
     push 78
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -881,6 +960,7 @@ irq79:
     push 79
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -892,6 +972,7 @@ irq80:
     push 80
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -903,6 +984,7 @@ irq81:
     push 81
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -914,6 +996,7 @@ irq82:
     push 82
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -925,6 +1008,7 @@ irq83:
     push 83
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -936,6 +1020,7 @@ irq84:
     push 84
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -947,6 +1032,7 @@ irq85:
     push 85
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -958,6 +1044,7 @@ irq86:
     push 86
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -969,6 +1056,7 @@ irq87:
     push 87
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -980,6 +1068,7 @@ irq88:
     push 88
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -991,6 +1080,7 @@ irq89:
     push 89
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1002,6 +1092,7 @@ irq90:
     push 90
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1013,6 +1104,7 @@ irq91:
     push 91
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1024,6 +1116,7 @@ irq92:
     push 92
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1035,6 +1128,7 @@ irq93:
     push 93
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1046,6 +1140,7 @@ irq94:
     push 94
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1057,6 +1152,7 @@ irq95:
     push 95
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1068,6 +1164,7 @@ irq96:
     push 96
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1079,6 +1176,7 @@ irq97:
     push 97
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1090,6 +1188,7 @@ irq98:
     push 98
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1101,6 +1200,7 @@ irq99:
     push 99
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1112,6 +1212,7 @@ irq100:
     push 100
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1123,6 +1224,7 @@ irq101:
     push 101
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1134,6 +1236,7 @@ irq102:
     push 102
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1145,6 +1248,7 @@ irq103:
     push 103
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1156,6 +1260,7 @@ irq104:
     push 104
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1167,6 +1272,7 @@ irq105:
     push 105
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1178,6 +1284,7 @@ irq106:
     push 106
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1189,6 +1296,7 @@ irq107:
     push 107
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1200,6 +1308,7 @@ irq108:
     push 108
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1211,6 +1320,7 @@ irq109:
     push 109
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1222,6 +1332,7 @@ irq110:
     push 110
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1233,6 +1344,7 @@ irq111:
     push 111
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1244,6 +1356,7 @@ irq112:
     push 112
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1255,6 +1368,7 @@ irq113:
     push 113
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1266,6 +1380,7 @@ irq114:
     push 114
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1277,6 +1392,7 @@ irq115:
     push 115
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1288,6 +1404,7 @@ irq116:
     push 116
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1299,6 +1416,7 @@ irq117:
     push 117
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1310,6 +1428,7 @@ irq118:
     push 118
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1321,6 +1440,7 @@ irq119:
     push 119
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1332,6 +1452,7 @@ irq120:
     push 120
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1343,6 +1464,7 @@ irq121:
     push 121
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1354,6 +1476,7 @@ irq122:
     push 122
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1365,6 +1488,7 @@ irq123:
     push 123
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1376,6 +1500,7 @@ irq124:
     push 124
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1387,6 +1512,7 @@ irq125:
     push 125
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1398,6 +1524,7 @@ irq126:
     push 126
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1409,6 +1536,7 @@ irq127:
     push 127
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1420,6 +1548,7 @@ irq128:
     push 128
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1431,6 +1560,7 @@ irq129:
     push 129
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1442,6 +1572,7 @@ irq130:
     push 130
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1453,6 +1584,7 @@ irq131:
     push 131
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1464,6 +1596,7 @@ irq132:
     push 132
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1475,6 +1608,7 @@ irq133:
     push 133
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1486,6 +1620,7 @@ irq134:
     push 134
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1497,6 +1632,7 @@ irq135:
     push 135
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1508,6 +1644,7 @@ irq136:
     push 136
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1519,6 +1656,7 @@ irq137:
     push 137
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1530,6 +1668,7 @@ irq138:
     push 138
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1541,6 +1680,7 @@ irq139:
     push 139
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1552,6 +1692,7 @@ irq140:
     push 140
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1563,6 +1704,7 @@ irq141:
     push 141
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1574,6 +1716,7 @@ irq142:
     push 142
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1585,6 +1728,7 @@ irq143:
     push 143
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1596,6 +1740,7 @@ irq144:
     push 144
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1607,6 +1752,7 @@ irq145:
     push 145
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1618,6 +1764,7 @@ irq146:
     push 146
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1629,6 +1776,7 @@ irq147:
     push 147
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1640,6 +1788,7 @@ irq148:
     push 148
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1651,6 +1800,7 @@ irq149:
     push 149
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1662,6 +1812,7 @@ irq150:
     push 150
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1673,6 +1824,7 @@ irq151:
     push 151
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1684,6 +1836,7 @@ irq152:
     push 152
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1695,6 +1848,7 @@ irq153:
     push 153
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1706,6 +1860,7 @@ irq154:
     push 154
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1717,6 +1872,7 @@ irq155:
     push 155
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1728,6 +1884,7 @@ irq156:
     push 156
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1739,6 +1896,7 @@ irq157:
     push 157
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1750,6 +1908,7 @@ irq158:
     push 158
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1761,6 +1920,7 @@ irq159:
     push 159
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1772,6 +1932,7 @@ irq160:
     push 160
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1783,6 +1944,7 @@ irq161:
     push 161
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1794,6 +1956,7 @@ irq162:
     push 162
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1805,6 +1968,7 @@ irq163:
     push 163
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1816,6 +1980,7 @@ irq164:
     push 164
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1827,6 +1992,7 @@ irq165:
     push 165
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1838,6 +2004,7 @@ irq166:
     push 166
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1849,6 +2016,7 @@ irq167:
     push 167
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1860,6 +2028,7 @@ irq168:
     push 168
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1871,6 +2040,7 @@ irq169:
     push 169
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1882,6 +2052,7 @@ irq170:
     push 170
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1893,6 +2064,7 @@ irq171:
     push 171
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1904,6 +2076,7 @@ irq172:
     push 172
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1915,6 +2088,7 @@ irq173:
     push 173
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1926,6 +2100,7 @@ irq174:
     push 174
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1937,6 +2112,7 @@ irq175:
     push 175
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1948,6 +2124,7 @@ irq176:
     push 176
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1959,6 +2136,7 @@ irq177:
     push 177
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1970,6 +2148,7 @@ irq178:
     push 178
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1981,6 +2160,7 @@ irq179:
     push 179
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -1992,6 +2172,7 @@ irq180:
     push 180
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2003,6 +2184,7 @@ irq181:
     push 181
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2014,6 +2196,7 @@ irq182:
     push 182
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2025,6 +2208,7 @@ irq183:
     push 183
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2036,6 +2220,7 @@ irq184:
     push 184
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2047,6 +2232,7 @@ irq185:
     push 185
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2058,6 +2244,7 @@ irq186:
     push 186
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2069,6 +2256,7 @@ irq187:
     push 187
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2080,6 +2268,7 @@ irq188:
     push 188
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2091,6 +2280,7 @@ irq189:
     push 189
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2102,6 +2292,7 @@ irq190:
     push 190
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2113,6 +2304,7 @@ irq191:
     push 191
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2124,6 +2316,7 @@ irq192:
     push 192
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2135,6 +2328,7 @@ irq193:
     push 193
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2146,6 +2340,7 @@ irq194:
     push 194
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2157,6 +2352,7 @@ irq195:
     push 195
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2168,6 +2364,7 @@ irq196:
     push 196
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2179,6 +2376,7 @@ irq197:
     push 197
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2190,6 +2388,7 @@ irq198:
     push 198
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2201,6 +2400,7 @@ irq199:
     push 199
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2212,6 +2412,7 @@ irq200:
     push 200
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2223,6 +2424,7 @@ irq201:
     push 201
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2234,6 +2436,7 @@ irq202:
     push 202
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2245,6 +2448,7 @@ irq203:
     push 203
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2256,6 +2460,7 @@ irq204:
     push 204
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2267,6 +2472,7 @@ irq205:
     push 205
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2278,6 +2484,7 @@ irq206:
     push 206
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2289,6 +2496,7 @@ irq207:
     push 207
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2300,6 +2508,7 @@ irq208:
     push 208
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2311,6 +2520,7 @@ irq209:
     push 209
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2322,6 +2532,7 @@ irq210:
     push 210
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2333,6 +2544,7 @@ irq211:
     push 211
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2344,6 +2556,7 @@ irq212:
     push 212
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2355,6 +2568,7 @@ irq213:
     push 213
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2366,6 +2580,7 @@ irq214:
     push 214
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2377,6 +2592,7 @@ irq215:
     push 215
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2388,6 +2604,7 @@ irq216:
     push 216
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2399,6 +2616,7 @@ irq217:
     push 217
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2410,6 +2628,7 @@ irq218:
     push 218
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2421,6 +2640,7 @@ irq219:
     push 219
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2432,6 +2652,7 @@ irq220:
     push 220
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2443,6 +2664,7 @@ irq221:
     push 221
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2454,6 +2676,7 @@ irq222:
     push 222
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2465,6 +2688,7 @@ irq223:
     push 223
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2476,6 +2700,7 @@ irq224:
     push 224
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2487,6 +2712,7 @@ irq225:
     push 225
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2498,6 +2724,7 @@ irq226:
     push 226
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2509,6 +2736,7 @@ irq227:
     push 227
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2520,6 +2748,7 @@ irq228:
     push 228
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2531,6 +2760,7 @@ irq229:
     push 229
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2542,6 +2772,7 @@ irq230:
     push 230
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2553,6 +2784,7 @@ irq231:
     push 231
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2564,6 +2796,7 @@ irq232:
     push 232
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2575,6 +2808,7 @@ irq233:
     push 233
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2586,6 +2820,7 @@ irq234:
     push 234
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2597,6 +2832,7 @@ irq235:
     push 235
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2608,6 +2844,7 @@ irq236:
     push 236
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2619,6 +2856,7 @@ irq237:
     push 237
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2630,6 +2868,7 @@ irq238:
     push 238
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2641,6 +2880,7 @@ irq239:
     push 239
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2652,6 +2892,7 @@ irq240:
     push 240
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2663,6 +2904,7 @@ irq241:
     push 241
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2674,6 +2916,7 @@ irq242:
     push 242
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2685,6 +2928,7 @@ irq243:
     push 243
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2696,6 +2940,7 @@ irq244:
     push 244
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2707,6 +2952,7 @@ irq245:
     push 245
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2718,6 +2964,7 @@ irq246:
     push 246
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2729,6 +2976,7 @@ irq247:
     push 247
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2740,6 +2988,7 @@ irq248:
     push 248
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2751,6 +3000,7 @@ irq249:
     push 249
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2762,6 +3012,7 @@ irq250:
     push 250
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2773,6 +3024,7 @@ irq251:
     push 251
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2784,6 +3036,7 @@ irq252:
     push 252
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2795,6 +3048,7 @@ irq253:
     push 253
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2806,6 +3060,7 @@ irq254:
     push 254
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret
 
@@ -2817,5 +3072,6 @@ irq255:
     push 255
     cld
     call interrupt_handler
+    add esp, 4
     popad
     iret

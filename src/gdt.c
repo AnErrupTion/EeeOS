@@ -47,7 +47,7 @@ void gdt_init()
     gdt_add_segment(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // Data segment
 
     gdtr gdt = {
-            .size = (sizeof(gdt_entry) * 3) - 1,
+            .size = (sizeof(gdt_entry) * sizeof(gdt_entries)) - 1,
             .offset = (uint32_t)gdt_entries
     };
 

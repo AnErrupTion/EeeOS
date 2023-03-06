@@ -24,7 +24,7 @@ void interrupt_handler(uint32_t irq)
         case 11: abort("Segment not present");
         case 12: abort("Stack exception");
         case 13: abort("General Protection Fault");
-        case 14: abort("Memory error"); // TODO
+        case 14: abort("Memory error");
         case 16: abort("Co-processor error");
         case 19: abort("SIMD floating point exception");
         default:
@@ -293,7 +293,7 @@ extern void irq253();
 extern void irq254();
 extern void irq255();
 
-/*typedef struct
+typedef struct
 {
     uint8_t rpl : 2;
     uint8_t ti : 1;
@@ -306,7 +306,7 @@ typedef struct
     uint8_t zero : 1;
     uint8_t dpl : 2;
     uint8_t p : 1;
-} __attribute__((packed)) type_attrib;*/
+} __attribute__((packed)) type_attrib;
 
 typedef struct
 {
@@ -317,17 +317,17 @@ typedef struct
 typedef struct
 {
     uint16_t offset_1; // Offset bits 0..15
-    uint16_t selector; // A code segment selector in GDT or LDT
+    segment_select selector; // A code segment selector in GDT or LDT
     uint8_t zero; // Unused, set to 0
-    uint8_t type_attributes; // Gate type, DP1 and P fields
+    type_attrib type_attributes; // Gate type, DP1 and P fields
     uint16_t offset_2; // Offset bits 16..31
 } __attribute__((packed)) idt_entry;
 
-idt_entry idt_entries[32];
+idt_entry idt_entries[256];
 
 void idt_add_table(uint32_t index, uint32_t offset)
 {
-    /*type_attrib type_attr = {
+    type_attrib type_attr = {
             .gate_type = 0b1110, // 32-bit interrupt gate
             .zero = 0b0,
             .dpl = 0b00, // Ring 0
@@ -338,13 +338,13 @@ void idt_add_table(uint32_t index, uint32_t offset)
             .rpl = 0b00, // Ring 0
             .ti = 0b0, // GDT
             .index = 0b0000000000001 // GDT entry index (32-bit code segment)
-    };*/
+    };
 
     idt_entry entry = {
             .offset_1 = (uint16_t)(offset & 0xFFFF),
-            .selector = 0x08,
+            .selector = segment_sel,
             .zero = 0,
-            .type_attributes = 0x8E,
+            .type_attributes = type_attr,
             .offset_2 = (uint16_t)((offset >> 16) & 0xFFFF)
     };
 
@@ -385,7 +385,7 @@ void idt_init()
     idt_add_table(29, (uint32_t)irq29);
     idt_add_table(30, (uint32_t)irq30);
     idt_add_table(31, (uint32_t)irq31);
-    /*idt_add_table(32, (uint32_t)irq32);
+    idt_add_table(32, (uint32_t)irq32);
     idt_add_table(33, (uint32_t)irq33);
     idt_add_table(34, (uint32_t)irq34);
     idt_add_table(35, (uint32_t)irq35);
@@ -608,10 +608,10 @@ void idt_init()
     idt_add_table(252, (uint32_t)irq252);
     idt_add_table(253, (uint32_t)irq253);
     idt_add_table(254, (uint32_t)irq254);
-    idt_add_table(255, (uint32_t)irq255);*/
+    idt_add_table(255, (uint32_t)irq255);
 
     idtr idt = {
-            .size = (sizeof(idt_entry) * 32) - 1,
+            .size = (sizeof(idt_entry) * sizeof(idt_entries)) - 1,
             .offset = (uint32_t)idt_entries
     };
 
