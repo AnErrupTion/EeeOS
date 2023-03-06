@@ -3,10 +3,10 @@
 //
 
 #include "../include/panic.h"
-#include "../include/vga.h"
+#include "../include/drivers/vga.h"
 
 void abort(const char* msg)
 {
     term_write_string(msg);
-    while (1) {}
+    for (;;) {}
 }

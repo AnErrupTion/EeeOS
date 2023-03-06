@@ -8,7 +8,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "std.h"
+#include "../std.h"
 
 void term_init();
 void term_set_color(uint8_t color);

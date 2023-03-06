@@ -2,7 +2,7 @@
 // Created by anerruption on 05/03/23.
 //
 
-#include "../include/vga.h"
+#include "../../include/drivers/vga.h"
 
 enum vga_color {
     BLACK = 0,

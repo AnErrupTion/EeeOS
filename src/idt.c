@@ -6,29 +6,40 @@
 
 #include "../include/idt.h"
 #include "../include/pic.h"
-#include "../include/vga.h"
 #include "../include/panic.h"
+#include "../include/drivers/ps2.h"
 
 void interrupt_handler(uint32_t irq)
 {
     switch (irq)
     {
-        case 0: abort("Divide error");
-        case 4: abort("Arithmetic overflow exception");
-        case 5: abort("Bound check error");
-        case 6: abort("Invalid OpCode");
-        case 7: abort("Co-processor not available");
-        case 8: abort("Double fault");
-        case 9: abort("Co-processor segment over-run");
-        case 10: abort("Invalid TSS");
-        case 11: abort("Segment not present");
-        case 12: abort("Stack exception");
-        case 13: abort("General Protection Fault");
-        case 14: abort("Memory error");
-        case 16: abort("Co-processor error");
-        case 19: abort("SIMD floating point exception");
+        case 0: abort("Divide error"); break;
+        case 4: abort("Arithmetic overflow exception"); break;
+        case 5: abort("Bound check error"); break;
+        case 6: abort("Invalid OpCode"); break;
+        case 7: abort("Co-processor not available"); break;
+        case 8: abort("Double fault"); break;
+        case 9: abort("Co-processor segment over-run"); break;
+        case 10: abort("Invalid TSS"); break;
+        case 11: abort("Segment not present"); break;
+        case 12: abort("Stack exception"); break;
+        case 13: abort("General Protection Fault"); break;
+        case 14: abort("Memory error"); break;
+        case 16: abort("Co-processor error"); break;
+        case 19: abort("SIMD floating point exception"); break;
         default:
-            term_write_string("A");
+
+            // Hardware interrupt
+            if (irq >= 0x20 && irq < 0x30)
+            {
+                uint32_t new_irq = irq - 0x20;
+
+                switch (new_irq)
+                {
+                    case 1: ps2_on_interrupt(); break;
+                }
+            }
+
             pic_send_eoi(irq);
             break;
     }
