@@ -323,7 +323,7 @@ typedef struct
     uint16_t offset_2; // Offset bits 16..31
 } __attribute__((packed)) idt_entry;
 
-idt_entry idt_entries[256];
+idt_entry idt_entries[32];
 
 void idt_add_table(uint32_t index, uint32_t offset)
 {
@@ -385,7 +385,7 @@ void idt_init()
     idt_add_table(29, (uint32_t)irq29);
     idt_add_table(30, (uint32_t)irq30);
     idt_add_table(31, (uint32_t)irq31);
-    idt_add_table(32, (uint32_t)irq32);
+    /*idt_add_table(32, (uint32_t)irq32);
     idt_add_table(33, (uint32_t)irq33);
     idt_add_table(34, (uint32_t)irq34);
     idt_add_table(35, (uint32_t)irq35);
@@ -608,10 +608,10 @@ void idt_init()
     idt_add_table(252, (uint32_t)irq252);
     idt_add_table(253, (uint32_t)irq253);
     idt_add_table(254, (uint32_t)irq254);
-    idt_add_table(255, (uint32_t)irq255);
+    idt_add_table(255, (uint32_t)irq255);*/
 
     idtr idt = {
-            .size = sizeof(idt_entries) - 1,
+            .size = (sizeof(idt_entry) * 32) - 1,
             .offset = (uint32_t)idt_entries
     };
 
