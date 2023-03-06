@@ -2,7 +2,7 @@
 // Created by anerruption on 06/03/23.
 //
 
-#include "../../include/drivers/scan_map.h"
+#include "../../include/utils/scan_map.h"
 
 key get_keyboard_char(uint8_t scan_code)
 {
