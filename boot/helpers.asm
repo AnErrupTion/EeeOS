@@ -29,10 +29,3 @@ load_idt:
     lidt [eax]
     sti
     ret
-
-global test_irq
-align 4
-
-test_irq:
-    int 0x80
-    ret

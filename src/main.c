@@ -6,9 +6,6 @@
 #include "../include/gdt.h"
 #include "../include/pic.h"
 #include "../include/idt.h"
-//#include "../include/ps2.h"
-
-extern void test_irq();
 
 void kernel_main()
 {
@@ -23,8 +20,6 @@ void kernel_main()
     term_write_string("Initializing IDT...\n");
     idt_init();
 
-    /*term_write_string("Initializing PS/2...\n");
-    ps2_init();*/
-
-    test_irq();
+    term_write_string("Initializing PIT...\n");
+    pic_clear_irq_mask(0);
 }

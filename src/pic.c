@@ -36,9 +36,9 @@ void pic_remap(uint8_t offset1, uint8_t offset2)
     uint8_t a2 = inb(PIC2_DATA);
 
     // Start the initialization sequence (in cascade mode)
-    outb(PIC1_COMMAND, ICW1_INIT + ICW1_ICW4);
+    outb(PIC1_COMMAND, ICW1_INIT | ICW1_ICW4);
     io_wait();
-    outb(PIC2_COMMAND, ICW1_INIT + ICW1_ICW4);
+    outb(PIC2_COMMAND, ICW1_INIT | ICW1_ICW4);
     io_wait();
 
     // ICW2: Master PIC vector offset
