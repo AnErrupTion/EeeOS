@@ -62,9 +62,9 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
     }
 
     term_write_string("Total available memory: ");
-    len = itoa(total_size, int_str, 10);
+    len = itoa(total_size / 1024 / 1024, int_str, 10);
     term_write(int_str, len);
-    term_write_string("B\n");
+    term_write_string("M\n");
 
     // Calculate the required values
     total_pages = round(total_size / PAGE_SIZE);
