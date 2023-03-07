@@ -12,13 +12,15 @@
 #define PAGE_SIZE 4096 // Size of one page
 #define BITMAP_UNIT_SIZE 8 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
 
+typedef uint8_t bitmap_unit;
+
 typedef struct
 {
     uint64_t address;
     uint64_t size;
 } map;
 
-uint8_t* bitmap;
+bitmap_unit* bitmap;
 map memory_maps[144]; // TODO: Get rid of this
 
 size_t number_of_maps = 0; // Number of available Multiboot 2 memory map entries
@@ -60,16 +62,16 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
     }
 
     term_write_string("Total available memory: ");
-    len = itoa(total_size / 1024 / 1024, int_str, 10);
+    len = itoa(total_size, int_str, 10);
     term_write(int_str, len);
-    term_write_string("M\n");
+    term_write_string("B\n");
 
-    // Calculate required values
+    // Calculate the required values
     total_pages = round(total_size / PAGE_SIZE);
     bitmap_size = round(total_pages / BITMAP_UNIT_SIZE) + 1; // TODO: Round to the nearest number above or not? (if not, remove the "+ 1", but if yes, then properly round above)
     number_of_pages = round(bitmap_size / PAGE_SIZE) + 1; // TODO: Round to the nearest number above and remove the "+ 1"
 
-    // Find memory map for bitmap
+    // Find a memory map for bitmap
     map best_map;
     bool found_map = false;
 
@@ -99,7 +101,7 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
         bitmap[i] = 1;
     }
 
-    // Set all other pages free
+    // Set all the other pages free
     for (size_t i = number_of_pages; i < bitmap_size; i++)
     {
         bitmap[i] = 0;
@@ -108,6 +110,7 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
 
 uint8_t* memory_alloc(size_t size)
 {
+    // Find a memory map for size
     map best_map;
     bool found_map = false;
 
@@ -128,6 +131,7 @@ uint8_t* memory_alloc(size_t size)
 
     uint32_t address = best_map.address;
 
+    // Calculate the required values
     size_t sz = size;
     while (sz % PAGE_SIZE != 0)
     {
@@ -140,21 +144,24 @@ uint8_t* memory_alloc(size_t size)
 
     for (;;)
     {
-        uint8_t pages = bitmap[index];
+        bitmap_unit unit = bitmap[index];
 
         for (size_t i = 0; i < BITMAP_UNIT_SIZE; i++)
         {
+            // We have allocated the required number of pages, we can safely return the buffer now.
             if (satisfied_pages == required_pages)
             {
                 return (uint8_t*)address;
             }
 
-            if ((pages & (1 << i)) == 0)
+            // We found a free page!
+            if ((unit & (1 << i)) == 0)
             {
                 satisfied_pages++;
-                pages |= 1 << i;
-                bitmap[index] = pages;
+                unit |= 1 << i;
+                bitmap[index] = unit;
             }
+            // Either we still didn't find a free page, or the next page is allocated.
             else
             {
                 address += PAGE_SIZE;

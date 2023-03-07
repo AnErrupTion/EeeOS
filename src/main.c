@@ -46,14 +46,20 @@ void kernel_main(multiboot_info* info)
 
     test_alloc();
 
+    // Disable interrupts just to be sure
+    asm("cli");
+
     term_write_string("Initializing GDT...\n");
     gdt_init();
+
+    term_write_string("Initializing IDT...\n");
+    idt_init();
 
     term_write_string("Initializing PIC...\n");
     pic_init();
 
-    term_write_string("Initializing IDT...\n");
-    idt_init();
+    // Enable interrupts now that we have the PIC set up
+    asm("sti");
 
     term_write_string("Initializing PS/2...\n");
     ps2_init();
