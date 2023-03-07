@@ -30,6 +30,7 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
     char int_str[15];
     size_t len;
 
+    size_t total_size = 0;
     size_t index = 0;
 
     // Find all available memory map entries
@@ -53,8 +54,15 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
             };
 
             memory_maps[index++] = current_map;
+
+            total_size += entry.size;
         }
     }
+
+    term_write_string("Total available memory: ");
+    len = itoa(total_size / 1024 / 1024, int_str, 10);
+    term_write(int_str, len);
+    term_write_string("M\n");
 
     // Allocate NUMBER_OF_PAGES pages for bitmap
     map best_map;
