@@ -35,7 +35,7 @@ void kernel_main(multiboot_info* info)
     term_init();
 
     term_write_string("Initializing PMM...\n");
-    pmm_init(info->memory_map, info->memory_map_length);
+    pmm_init(info->memory_upper, info->memory_map, info->memory_map_length);
 
     test_alloc();
 
