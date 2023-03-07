@@ -9,5 +9,6 @@
 #include <stdint.h>
 
 size_t strlen(const char* str);
+size_t itoa(uint64_t value, char* sp, int radix);
 
 #endif //EEEOS_STD_H

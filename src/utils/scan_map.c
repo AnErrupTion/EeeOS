@@ -4,7 +4,7 @@
 
 #include "../../include/utils/scan_map.h"
 
-key get_keyboard_char(uint8_t scan_code)
+key get_keyboard_key(uint8_t scan_code)
 {
     key key;
 

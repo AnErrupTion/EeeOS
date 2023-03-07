@@ -20,6 +20,6 @@ typedef struct
     char value;
 } key;
 
-key get_keyboard_char(uint8_t scan_code);
+key get_keyboard_key(uint8_t scan_code);
 
 #endif //EEEOS_SCAN_MAP_H

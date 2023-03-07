@@ -6,6 +6,7 @@
 #include "../../include/drivers/vga.h"
 #include "../../include/drivers/ps2.h"
 #include "../../include/utils/scan_map.h"
+#include "../../include/memory/pmm.h"
 
 int shell_read_line(char* buffer)
 {
@@ -20,7 +21,7 @@ int shell_read_line(char* buffer)
             continue;
         }
 
-        key keyboard_char = get_keyboard_char(scan_code);
+        key keyboard_char = get_keyboard_key(scan_code);
 
         if (keyboard_char.type == UNKNOWN)
         {
@@ -40,7 +41,12 @@ int shell_read_line(char* buffer)
 
 void shell_exec()
 {
-    char buffer[128];
+    char* buffer = (char*) memory_alloc(128);
+
+    char int_str[10];
+    size_t len = itoa((uint32_t)buffer, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
 
     for (;;)
     {

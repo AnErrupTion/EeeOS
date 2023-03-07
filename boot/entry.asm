@@ -74,6 +74,8 @@ _start:
 	; preserved and the call is well defined.
         ; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
     extern kernel_main
+
+    push ebx ; Multiboot information structure address
 	call kernel_main
 
 	; If the system has nothing more to do, put the computer into an

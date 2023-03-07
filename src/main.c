@@ -3,15 +3,47 @@
 //
 
 #include "../include/drivers/vga.h"
+#include "../include/multiboot.h"
 #include "../include/gdt.h"
 #include "../include/pic.h"
 #include "../include/idt.h"
 #include "../include/drivers/ps2.h"
 #include "../include/apps/shell.h"
+#include "../include/memory/pmm.h"
 
-void kernel_main()
+void kernel_main(multiboot_info* info)
 {
     term_init();
+
+    term_write_string("Boot loader: ");
+    term_write_string(info->bootloader_name);
+    term_write_char('\n');
+    term_write_string("Command line: ");
+    term_write_string(info->command_line);
+    term_write_char('\n');
+
+    term_write_string("Initializing PMM...\n");
+    pmm_init(info->memory_map, info->memory_map_length);
+
+    term_write_string("RAM: ");
+    char* int_str = (char*)memory_alloc(10);
+    size_t len = itoa(info->memory_upper / 1024, int_str, 10);
+    term_write(int_str, len);
+    term_write_string("M\n");
+
+    len = itoa((uint32_t)int_str, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
+
+    int_str = (char*)memory_alloc(8192);
+    len = itoa((uint32_t)int_str, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
+
+    int_str = (char*)memory_alloc(10);
+    len = itoa((uint32_t)int_str, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
 
     term_write_string("Initializing GDT...\n");
     gdt_init();
