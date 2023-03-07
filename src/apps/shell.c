@@ -41,7 +41,7 @@ int shell_read_line(char* buffer)
 
 void shell_exec()
 {
-    char* buffer = (char*) memory_alloc(128);
+    char* buffer = (char*) memory_alloc(1024);
 
     char int_str[10];
     size_t len = itoa((uint32_t)buffer, int_str, 10);

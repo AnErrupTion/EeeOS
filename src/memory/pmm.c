@@ -71,6 +71,21 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
     bitmap_size = round(total_pages / BITMAP_UNIT_SIZE) + 1; // TODO: Round to the nearest number above or not? (if not, remove the "+ 1", but if yes, then properly round above)
     number_of_pages = round(bitmap_size / PAGE_SIZE) + 1; // TODO: Round to the nearest number above and remove the "+ 1"
 
+    term_write_string("Total pages: ");
+    len = itoa(total_pages, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
+
+    term_write_string("Bitmap size: ");
+    len = itoa(bitmap_size, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
+
+    term_write_string("Number of pages: ");
+    len = itoa(number_of_pages, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
+
     // Find a memory map for bitmap
     map best_map;
     bool found_map = false;
@@ -89,22 +104,50 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
 
     if (found_map == false)
     {
-        abort("Unable to initialize PMM: Not enough memory.");
+        abort("PMM: unable to initialize: not enough memory.");
         return;
     }
 
     bitmap = (uint8_t*)best_map.address;
 
-    // Reserve number_of_pages pages for bitmap, in the bitmap itself
-    for (size_t i = 0; i < number_of_pages; i++)
-    {
-        bitmap[i] = 1;
-    }
+    size_t satisfied_pages = 0;
+    size_t index = 0;
 
-    // Set all the other pages free
-    for (size_t i = number_of_pages; i < bitmap_size; i++)
+    // Initialize bitmap: set all the pages free
+    for (size_t i = 0; i < bitmap_size; i++)
     {
         bitmap[i] = 0;
+    }
+
+    // Reserve number_of_pages pages for bitmap, in the bitmap itself
+    for (;;)
+    {
+        bitmap_unit unit = bitmap[index];
+
+        for (size_t i = 0; i < BITMAP_UNIT_SIZE; i++)
+        {
+            // We have allocated the required number of pages, we can safely return the buffer now.
+            if (satisfied_pages == number_of_pages)
+            {
+                return;
+            }
+
+            // We found a free page!
+            if ((unit & (1 << i)) == 0)
+            {
+                satisfied_pages++;
+                unit |= 1 << i;
+                bitmap[index] = unit;
+            }
+            // This should never happen
+            else
+            {
+                abort("PMM: found an allocated page when trying to allocate the bitmap.");
+                return;
+            }
+        }
+
+        index++;
     }
 }
 

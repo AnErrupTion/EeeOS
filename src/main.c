@@ -34,13 +34,6 @@ void kernel_main(multiboot_info* info)
 {
     term_init();
 
-    term_write_string("Boot loader: ");
-    term_write_string(info->bootloader_name);
-    term_write_char('\n');
-    term_write_string("Command line: ");
-    term_write_string(info->command_line);
-    term_write_char('\n');
-
     term_write_string("Initializing PMM...\n");
     pmm_init(info->memory_map, info->memory_map_length);
 
