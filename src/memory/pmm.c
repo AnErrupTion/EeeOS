@@ -135,9 +135,10 @@ void pmm_init(uint32_t max_memory_address, multiboot_memory_map_entry* memory_ma
     term_write_string("M\n");
 
     // Calculate the required values
-    total_pages = round(total_size / PAGE_SIZE);
-    bitmap_size = round(total_pages / BITMAP_UNIT_SIZE) + 1; // TODO: Round to the nearest number above or not? (if not, remove the "+ 1", but if yes, then properly round above)
-    number_of_pages = round(bitmap_size / PAGE_SIZE) + 1; // TODO: Round to the nearest number above and remove the "+ 1"
+    // TODO: Rounding
+    total_pages = total_size / PAGE_SIZE;
+    bitmap_size = total_pages / BITMAP_UNIT_SIZE + 1; // TODO: Round to the nearest number above or not? (if not, remove the "+ 1", but if yes, then properly round above)
+    number_of_pages = bitmap_size / PAGE_SIZE + 1; // TODO: Round to the nearest number above and remove the "+ 1"
 
     term_write_string("Total pages: ");
     len = itoa(total_pages, int_str, 10);

@@ -39,9 +39,3 @@ size_t itoa(uint64_t value, char* sp, int radix)
     *sp = '\0';
     return len;
 }
-
-//https://stackoverflow.com/a/4572591
-int round(float value)
-{
-    return value < 0.0 ? (int)(value - 0.5) : (int)(value + 0.5);
-}

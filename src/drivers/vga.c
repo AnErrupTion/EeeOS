@@ -3,6 +3,7 @@
 //
 
 #include "../../include/drivers/vga.h"
+#include "../../include/port.h"
 
 enum vga_color {
     BLACK = 0,
@@ -20,7 +21,7 @@ enum vga_color {
     LIGHT_RED = 12,
     LIGHT_MAGENTA = 13,
     LIGHT_BROWN = 14,
-    WHITE = 15,
+    WHITE = 15
 };
 
 static const size_t VGA_WIDTH = 80;
@@ -71,13 +72,25 @@ void term_set_color(uint8_t color)
 
 void term_write_char(char c)
 {
+    // Check if the character is a special character
     if (c == '\n')
     {
         terminal_column = 0;
         terminal_row++;
         return;
     }
+    else if (c == '\r')
+    {
+        terminal_column = 0;
+        return;
+    }
+    else if (c == '\t')
+    {
+        terminal_column += 4;
+        return;
+    }
 
+    // Else, print it
     term_put(c, terminal_color, terminal_column, terminal_row);
 
     if (++terminal_column == VGA_WIDTH)
@@ -89,6 +102,15 @@ void term_write_char(char c)
             terminal_row = 0;
         }
     }
+
+    // And finally, update the cursor
+    uint32_t location = (terminal_row * VGA_WIDTH) + terminal_column;
+
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (uint8_t)(location & 0xFF));
+
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (uint8_t)((location >> 8) & 0xFF));
 }
 
 void term_write(const char* data, size_t size)

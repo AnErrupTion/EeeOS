@@ -10,6 +10,5 @@
 
 size_t strlen(const char* str);
 size_t itoa(uint64_t value, char* sp, int radix);
-int round(float value);
 
 #endif //EEEOS_STD_H
