@@ -28,6 +28,11 @@ void test_alloc()
     len = itoa((uint32_t)int_str, int_str, 10);
     term_write(int_str, len);
     term_write_char('\n');
+
+    term_write_string("RAM in use: ");
+    len = itoa((get_pages_in_use() * get_page_size()) / 1024, int_str, 10);
+    term_write(int_str, len);
+    term_write_string("K\n");
 }
 
 void kernel_main(multiboot_info* info)

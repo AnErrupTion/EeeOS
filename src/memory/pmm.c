@@ -26,6 +26,7 @@ size_t number_of_maps = 0; // Number of available Multiboot 2 memory map entries
 size_t total_pages = 0; // Number of available pages
 size_t bitmap_size = 0; // Size of the bitmap
 size_t number_of_pages = 0; // Number of pages to allocate to store bitmap_size pages
+size_t pages_in_use = 0; // Number of pages that are currently in use
 
 void initialize_bitmap(map best_map)
 {
@@ -157,6 +158,19 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
 
     // Initialize the bitmap with the memory map we found
     initialize_bitmap(best_map);
+
+    // At this point, we are using number_of_pages pages
+    pages_in_use += number_of_pages;
+}
+
+size_t get_pages_in_use()
+{
+    return pages_in_use;
+}
+
+size_t get_page_size()
+{
+    return PAGE_SIZE;
 }
 
 uint8_t* memory_alloc(size_t size)
@@ -182,6 +196,7 @@ uint8_t* memory_alloc(size_t size)
             // We have allocated the required number of pages, we can safely return the buffer now.
             if (satisfied_pages == required_pages)
             {
+                pages_in_use += satisfied_pages;
                 return (uint8_t*)address;
             }
 

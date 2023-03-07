@@ -11,6 +11,8 @@
 #include "../multiboot.h"
 
 void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map, size_t memory_map_length);
+size_t get_pages_in_use();
+size_t get_page_size();
 uint8_t* memory_alloc(size_t size);
 void memory_free(uint8_t* buffer);
 
