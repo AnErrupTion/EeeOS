@@ -75,6 +75,7 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
     if (found_map == false)
     {
         abort("Unable to initialize PMM: Not enough memory.");
+        return;
     }
 
     bitmap = (uint8_t*)best_map.address;

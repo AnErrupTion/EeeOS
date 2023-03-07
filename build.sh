@@ -19,6 +19,13 @@ i686-elf-gcc -c src/apps/shell.c -o bin/shell.o -std=gnu2x -ffreestanding -O2 -W
 i686-elf-gcc -c src/utils/scan_map.c -o bin/scan_map.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
 i686-elf-gcc -c src/memory/pmm.c -o bin/pmm.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
 
-i686-elf-gcc -T linker.ld -o bin/EeeOS.bin -ffreestanding -O2 -nostdlib bin/*.o -lgcc
+mkdir bin/iso
 
-qemu-system-i386 -m 128M -kernel bin/EeeOS.bin
+i686-elf-gcc -T linker.ld -o bin/iso/EeeOS.bin -ffreestanding -O2 -nostdlib bin/*.o -lgcc
+
+cp limine/limine.cfg limine/limine.sys limine/limine-cd.bin bin/iso/
+xorriso -as mkisofs -b limine-cd.bin -no-emul-boot -boot-load-size 4 -boot-info-table bin/iso -o EeeOS.iso
+
+limine/limine-deploy EeeOS.iso
+
+qemu-system-i386 -m 128M -cdrom EeeOS.iso
