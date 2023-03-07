@@ -21,37 +21,14 @@ typedef struct
 } map;
 
 bitmap_unit* bitmap;
-map memory_maps[144]; // TODO: Get rid of this
 
 size_t number_of_maps = 0; // Number of available Multiboot 2 memory map entries
 size_t total_pages = 0; // Number of available pages
 size_t bitmap_size = 0; // Size of the bitmap
 size_t number_of_pages = 0; // Number of pages to allocate to store bitmap_size pages
 
-void initialize_bitmap()
+void initialize_bitmap(map best_map)
 {
-    // Find a memory map for bitmap
-    map best_map;
-    bool found_map = false;
-
-    for (size_t i = 0; i < number_of_maps; i++)
-    {
-        map memory_map = memory_maps[i];
-
-        if (bitmap_size <= memory_map.size)
-        {
-            best_map = memory_map;
-            found_map = true;
-            break;
-        }
-    }
-
-    if (found_map == false)
-    {
-        abort("PMM: unable to initialize: not enough memory.");
-        return;
-    }
-
     bitmap = (uint8_t*)best_map.address;
 
     size_t satisfied_pages = 0;
@@ -83,7 +60,7 @@ void initialize_bitmap()
                 unit |= 1 << i;
                 bitmap[index] = unit;
             }
-                // This should never happen
+            // This should never happen
             else
             {
                 abort("PMM: found an allocated page when trying to allocate the bitmap.");
@@ -95,12 +72,14 @@ void initialize_bitmap()
     }
 }
 
-void pmm_init(address_type max_memory_address, multiboot_memory_map_entry* memory_map, size_t memory_map_length)
+void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map, size_t memory_map_length)
 {
     char int_str[15];
     size_t len;
 
     size_t total_size = 0;
+
+    map memory_maps[memory_map_length];
 
     // Find all available memory map entries
     for (size_t i = 0; i < memory_map_length; i++)
@@ -154,12 +133,7 @@ void pmm_init(address_type max_memory_address, multiboot_memory_map_entry* memor
     term_write(int_str, len);
     term_write_char('\n');
 
-    initialize_bitmap();
-}
-
-uint8_t* memory_alloc(size_t size)
-{
-    // Find a memory map for size
+    // Find a memory map for bitmap
     map best_map;
     bool found_map = false;
 
@@ -167,7 +141,7 @@ uint8_t* memory_alloc(size_t size)
     {
         map memory_map = memory_maps[i];
 
-        if (size <= memory_map.size)
+        if (bitmap_size <= memory_map.size)
         {
             best_map = memory_map;
             found_map = true;
@@ -176,10 +150,17 @@ uint8_t* memory_alloc(size_t size)
     }
 
     if (found_map == false)
-        return NULL;
+    {
+        abort("PMM: unable to initialize: not enough memory.");
+        return;
+    }
 
-    address_type address = best_map.address;
+    // Initialize the bitmap with the memory map we found
+    initialize_bitmap(best_map);
+}
 
+uint8_t* memory_alloc(size_t size)
+{
     // Calculate the required values
     size_t sz = size;
     while (sz % PAGE_SIZE != 0)
@@ -190,6 +171,7 @@ uint8_t* memory_alloc(size_t size)
     size_t required_pages = sz / PAGE_SIZE;
     size_t satisfied_pages = 0;
     size_t index = 0;
+    size_t address = 0;
 
     for (;;)
     {
