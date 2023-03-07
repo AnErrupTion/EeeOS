@@ -28,4 +28,4 @@ xorriso -as mkisofs -b limine-cd.bin -no-emul-boot -boot-load-size 4 -boot-info-
 
 limine/limine-deploy EeeOS.iso
 
-qemu-system-i386 -enable-kvm -m 128M -cdrom EeeOS.iso
+qemu-system-i386 -enable-kvm -m 4G -cdrom EeeOS.iso
