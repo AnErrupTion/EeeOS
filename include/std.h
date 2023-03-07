@@ -8,9 +8,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-//https://stackoverflow.com/a/1011022
-#define ROUND_DOWN(N, S) ((N / S) * S)
-
 //https://github.com/limine-bootloader/limine/blob/886523359c85aa10691e6b82229c91f31f21a04f/common/lib/misc.h#L66
 #define DIV_ROUNDUP(a, b) ({ \
     __auto_type DIV_ROUNDUP_a = (a); \

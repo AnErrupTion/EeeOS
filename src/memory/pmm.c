@@ -135,7 +135,7 @@ void pmm_init(uint32_t max_memory_address, multiboot_memory_map_entry* memory_ma
     term_write_string("M\n");
 
     // Calculate the required values
-    total_pages = ROUND_DOWN(total_size / PAGE_SIZE, 1);
+    total_pages = total_size / PAGE_SIZE;
     bitmap_size = DIV_ROUNDUP(total_pages, BITMAP_UNIT_SIZE);
     number_of_pages = DIV_ROUNDUP(bitmap_size, PAGE_SIZE);
 
