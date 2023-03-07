@@ -95,7 +95,7 @@ void initialize_bitmap()
     }
 }
 
-void pmm_init(uint32_t max_memory_address, multiboot_memory_map_entry* memory_map, uint32_t memory_map_length)
+void pmm_init(address_type max_memory_address, multiboot_memory_map_entry* memory_map, size_t memory_map_length)
 {
     char int_str[15];
     size_t len;
@@ -103,7 +103,7 @@ void pmm_init(uint32_t max_memory_address, multiboot_memory_map_entry* memory_ma
     size_t total_size = 0;
 
     // Find all available memory map entries
-    for (uint32_t i = 0; i < memory_map_length; i++)
+    for (size_t i = 0; i < memory_map_length; i++)
     {
         multiboot_memory_map_entry entry = memory_map[i];
 
@@ -178,7 +178,7 @@ uint8_t* memory_alloc(size_t size)
     if (found_map == false)
         return NULL;
 
-    uint32_t address = best_map.address;
+    address_type address = best_map.address;
 
     // Calculate the required values
     size_t sz = size;
