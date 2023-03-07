@@ -10,11 +10,7 @@
 #include "../../include/panic.h"
 
 #define PAGE_SIZE 4096 // Size of one page
-#define NUMBER_OF_MAPS 2 // Number of available Multiboot 2 memory map entries
-#define TOTAL_PAGES 32639 // total_size / PAGE_SIZE -> round to the nearest number (not above)
 #define BITMAP_UNIT_SIZE 8 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
-#define BITMAP_SIZE 4080 // TOTAL_PAGES / BITMAP_UNIT_SIZE -> round to the nearest number above (?)
-#define NUMBER_OF_PAGES 1 // BITMAP_SIZE / PAGE_SIZE (Number of pages to allocate to store BITMAP_SIZE pages) -> round to the nearest number above
 
 typedef struct
 {
@@ -23,7 +19,12 @@ typedef struct
 } map;
 
 uint8_t* bitmap;
-map memory_maps[NUMBER_OF_MAPS];
+map memory_maps[144]; // TODO: Get rid of this
+
+size_t number_of_maps = 0; // Number of available Multiboot 2 memory map entries
+size_t total_pages = 0; // Number of available pages
+size_t bitmap_size = 0; // Size of the bitmap
+size_t number_of_pages = 0; // Number of pages to allocate to store bitmap_size pages
 
 void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length)
 {
@@ -31,7 +32,6 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
     size_t len;
 
     size_t total_size = 0;
-    size_t index = 0;
 
     // Find all available memory map entries
     for (uint32_t i = 0; i < memory_map_length; i++)
@@ -53,7 +53,7 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
                     .size = entry.size
             };
 
-            memory_maps[index++] = current_map;
+            memory_maps[number_of_maps++] = current_map;
 
             total_size += entry.size;
         }
@@ -64,15 +64,20 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
     term_write(int_str, len);
     term_write_string("M\n");
 
-    // Allocate NUMBER_OF_PAGES pages for bitmap
+    // Calculate required values
+    total_pages = round(total_size / PAGE_SIZE);
+    bitmap_size = round(total_pages / BITMAP_UNIT_SIZE) + 1; // TODO: Round to the nearest number above or not? (if not, remove the "+ 1", but if yes, then properly round above)
+    number_of_pages = round(bitmap_size / PAGE_SIZE) + 1; // TODO: Round to the nearest number above and remove the "+ 1"
+
+    // Find memory map for bitmap
     map best_map;
     bool found_map = false;
 
-    for (size_t i = 0; i < NUMBER_OF_MAPS; i++)
+    for (size_t i = 0; i < number_of_maps; i++)
     {
         map memory_map = memory_maps[i];
 
-        if (BITMAP_SIZE <= memory_map.size)
+        if (bitmap_size <= memory_map.size)
         {
             best_map = memory_map;
             found_map = true;
@@ -88,14 +93,14 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
 
     bitmap = (uint8_t*)best_map.address;
 
-    // Reserve NUMBER_OF_PAGES pages for bitmap, in the bitmap itself
-    for (size_t i = 0; i < NUMBER_OF_PAGES; i++)
+    // Reserve number_of_pages pages for bitmap, in the bitmap itself
+    for (size_t i = 0; i < number_of_pages; i++)
     {
         bitmap[i] = 1;
     }
 
     // Set all other pages free
-    for (size_t i = NUMBER_OF_PAGES; i < BITMAP_SIZE; i++)
+    for (size_t i = number_of_pages; i < bitmap_size; i++)
     {
         bitmap[i] = 0;
     }
@@ -106,7 +111,7 @@ uint8_t* memory_alloc(size_t size)
     map best_map;
     bool found_map = false;
 
-    for (size_t i = 0; i < NUMBER_OF_MAPS; i++)
+    for (size_t i = 0; i < number_of_maps; i++)
     {
         map memory_map = memory_maps[i];
 

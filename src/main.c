@@ -11,6 +11,25 @@
 #include "../include/apps/shell.h"
 #include "../include/memory/pmm.h"
 
+void test_alloc()
+{
+    char* int_str = (char*)memory_alloc(10);
+
+    size_t len = itoa((uint32_t)int_str, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
+
+    int_str = (char*)memory_alloc(8192);
+    len = itoa((uint32_t)int_str, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
+
+    int_str = (char*)memory_alloc(10);
+    len = itoa((uint32_t)int_str, int_str, 10);
+    term_write(int_str, len);
+    term_write_char('\n');
+}
+
 void kernel_main(multiboot_info* info)
 {
     term_init();
@@ -25,25 +44,7 @@ void kernel_main(multiboot_info* info)
     term_write_string("Initializing PMM...\n");
     pmm_init(info->memory_map, info->memory_map_length);
 
-    term_write_string("RAM: ");
-    char* int_str = (char*)memory_alloc(10);
-    size_t len = itoa(info->memory_upper / 1024, int_str, 10);
-    term_write(int_str, len);
-    term_write_string("M\n");
-
-    len = itoa((uint32_t)int_str, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
-
-    int_str = (char*)memory_alloc(8192);
-    len = itoa((uint32_t)int_str, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
-
-    int_str = (char*)memory_alloc(10);
-    len = itoa((uint32_t)int_str, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
+    test_alloc();
 
     term_write_string("Initializing GDT...\n");
     gdt_init();
