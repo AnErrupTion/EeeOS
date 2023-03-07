@@ -10,9 +10,9 @@
 #include "../../include/panic.h"
 
 #define PAGE_SIZE 4096 // Size of one page
-#define BITMAP_UNIT_SIZE 32 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
+#define BITMAP_UNIT_SIZE 64 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
 
-typedef uint32_t bitmap_unit;
+typedef uint64_t bitmap_unit;
 
 typedef struct
 {
