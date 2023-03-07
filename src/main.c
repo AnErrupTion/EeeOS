@@ -24,7 +24,7 @@ void test_alloc()
     term_write(int_str, len);
     term_write_char('\n');
 
-    int_str = (char*)memory_alloc(660000);
+    int_str = (char*)memory_alloc(2048);
     len = itoa((uint32_t)int_str, int_str, 10);
     term_write(int_str, len);
     term_write_char('\n');

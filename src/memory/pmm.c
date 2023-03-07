@@ -10,9 +10,9 @@
 #include "../../include/panic.h"
 
 #define PAGE_SIZE 4096 // Size of one page
-#define BITMAP_UNIT_SIZE 8 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
+#define BITMAP_UNIT_SIZE 32 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
 
-typedef uint8_t bitmap_unit;
+typedef uint32_t bitmap_unit;
 
 typedef struct
 {
@@ -93,8 +93,8 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
             term_write_string("Entry at address 0x");
             len = itoa(entry.address, int_str, 16);
             term_write(int_str, len);
-            term_write_string(" of size ");
-            len = itoa(entry.size, int_str, 10);
+            term_write_string(" of size 0x");
+            len = itoa(entry.size, int_str, 16);
             term_write(int_str, len);
             term_write_char('\n');
 
@@ -160,7 +160,7 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
     initialize_bitmap(best_map);
 
     // At this point, we are using number_of_pages pages
-    pages_in_use += number_of_pages;
+    pages_in_use = number_of_pages;
 }
 
 size_t get_pages_in_use()
