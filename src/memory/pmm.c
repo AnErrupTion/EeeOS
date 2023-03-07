@@ -9,7 +9,7 @@
 #include "../../include/drivers/vga.h"
 #include "../../include/panic.h"
 
-#define PAGE_SIZE 4096 // Size of one page
+#define PAGE_SIZE 1024 // Size of one page
 #define BITMAP_UNIT_SIZE 8 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
 
 typedef uint8_t bitmap_unit;
@@ -113,7 +113,7 @@ void pmm_init(multiboot_memory_map_entry* memory_map, uint32_t memory_map_length
     size_t satisfied_pages = 0;
     size_t index = 0;
 
-    // Initialize bitmap: set all the pages free
+    // Initialize bitmap by setting all the pages free
     for (size_t i = 0; i < bitmap_size; i++)
     {
         bitmap[i] = 0;
