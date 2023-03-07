@@ -9,7 +9,7 @@
 #include "../../include/drivers/vga.h"
 #include "../../include/panic.h"
 
-#define PAGE_SIZE 1024 // Size of one page
+#define PAGE_SIZE 4096 // Size of one page
 #define BITMAP_UNIT_SIZE 8 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
 
 typedef uint8_t bitmap_unit;
@@ -135,10 +135,9 @@ void pmm_init(uint32_t max_memory_address, multiboot_memory_map_entry* memory_ma
     term_write_string("M\n");
 
     // Calculate the required values
-    // TODO: Rounding
-    total_pages = total_size / PAGE_SIZE;
-    bitmap_size = total_pages / BITMAP_UNIT_SIZE + 1; // TODO: Round to the nearest number above or not? (if not, remove the "+ 1", but if yes, then properly round above)
-    number_of_pages = bitmap_size / PAGE_SIZE + 1; // TODO: Round to the nearest number above and remove the "+ 1"
+    total_pages = ROUND_DOWN(total_size / PAGE_SIZE, 1);
+    bitmap_size = DIV_ROUNDUP(total_pages, BITMAP_UNIT_SIZE);
+    number_of_pages = DIV_ROUNDUP(bitmap_size, PAGE_SIZE);
 
     term_write_string("Total pages: ");
     len = itoa(total_pages, int_str, 10);
