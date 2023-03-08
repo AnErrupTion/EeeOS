@@ -121,7 +121,30 @@ void term_write(const char* data, size_t size)
     }
 }
 
+void term_scroll_up()
+{
+    for (size_t i = 1; i < VGA_HEIGHT; i++)
+    {
+        for (size_t j = 0; j < VGA_WIDTH; j++)
+        {
+            uint16_t entry = terminal_buffer[i * VGA_WIDTH + j];
+
+            uint8_t chr = (uint8_t)(entry & 0xFF);
+            uint8_t col = (uint8_t)((entry >> 8) & 0xFF);
+
+            term_put(chr, col, j, i - 1);
+        }
+    }
+
+    terminal_row--;
+}
+
 void term_write_string(const char* data)
 {
+    if (terminal_row == VGA_HEIGHT - 1)
+    {
+        term_scroll_up();
+    }
+
     term_write(data, strlen(data));
 }

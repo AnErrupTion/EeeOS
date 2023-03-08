@@ -10,9 +10,9 @@
 #include "../../include/panic.h"
 
 #define PAGE_SIZE 4096 // Size of one page
-#define BITMAP_UNIT_SIZE 64 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
+#define BITMAP_UNIT_SIZE 8 // Size of one unit in the bitmap (BITMAP_UNIT_SIZE pages per unit)
 
-typedef uint64_t bitmap_unit;
+typedef uint8_t bitmap_unit;
 
 typedef struct
 {
@@ -28,6 +28,7 @@ size_t bitmap_size = 0; // Size of the bitmap
 size_t number_of_pages = 0; // Number of pages to allocate to store bitmap_size pages
 size_t pages_in_use = 0; // Number of pages that are currently in use
 
+// TODO: Mark pages not available (like 640k-0x100000) as "allocated"
 void initialize_bitmap(map best_map)
 {
     bitmap = (uint8_t*)best_map.address;
