@@ -15,5 +15,6 @@ void term_set_color(uint8_t color);
 void term_write_char(char c);
 void term_write(const char* data, size_t size);
 void term_write_string(const char* data);
+void term_backspace();
 
 #endif //EEEOS_VGA_H

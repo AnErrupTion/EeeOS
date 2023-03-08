@@ -28,6 +28,16 @@ int shell_read_line(char* buffer)
             continue;
         }
 
+        if (keyboard_char.type == BACKSPACE)
+        {
+            if (index > 0)
+            {
+                buffer[--index] = ' ';
+                term_backspace();
+            }
+            continue;
+        }
+
         if (keyboard_char.type == ENTER)
         {
             term_write_char('\n');

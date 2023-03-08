@@ -70,6 +70,17 @@ void term_set_color(uint8_t color)
     terminal_color = color;
 }
 
+void term_update_cursor()
+{
+    uint32_t location = (terminal_row * VGA_WIDTH) + terminal_column;
+
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (uint8_t)(location & 0xFF));
+
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (uint8_t)((location >> 8) & 0xFF));
+}
+
 void term_write_char(char c)
 {
     // Check if the character is a special character
@@ -104,13 +115,7 @@ void term_write_char(char c)
     }
 
     // And finally, update the cursor
-    uint32_t location = (terminal_row * VGA_WIDTH) + terminal_column;
-
-    outb(0x3D4, 0x0F);
-    outb(0x3D5, (uint8_t)(location & 0xFF));
-
-    outb(0x3D4, 0x0E);
-    outb(0x3D5, (uint8_t)((location >> 8) & 0xFF));
+    term_update_cursor();
 }
 
 void term_write(const char* data, size_t size)
@@ -147,4 +152,10 @@ void term_write_string(const char* data)
     }
 
     term_write(data, strlen(data));
+}
+
+void term_backspace()
+{
+    term_put(' ', terminal_color, --terminal_column, terminal_row);
+    term_update_cursor();
 }

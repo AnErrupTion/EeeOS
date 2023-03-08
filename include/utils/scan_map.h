@@ -11,7 +11,8 @@ typedef enum
 {
     UNKNOWN,
     NORMAL,
-    ENTER
+    ENTER,
+    BACKSPACE
 } key_type;
 
 typedef struct

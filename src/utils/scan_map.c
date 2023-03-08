@@ -10,6 +10,9 @@ key get_keyboard_key(uint8_t scan_code)
 
     switch (scan_code)
     {
+        case 14:
+            key.type = BACKSPACE;
+            break;
         case 16:
             key.type = NORMAL;
             key.value = 'q';
@@ -52,6 +55,70 @@ key get_keyboard_key(uint8_t scan_code)
             break;
         case 28:
             key.type = ENTER;
+            break;
+        case 30:
+            key.type = NORMAL;
+            key.value = 'a';
+            break;
+        case 31:
+            key.type = NORMAL;
+            key.value = 's';
+            break;
+        case 32:
+            key.type = NORMAL;
+            key.value = 'd';
+            break;
+        case 33:
+            key.type = NORMAL;
+            key.value = 'f';
+            break;
+        case 34:
+            key.type = NORMAL;
+            key.value = 'g';
+            break;
+        case 35:
+            key.type = NORMAL;
+            key.value = 'h';
+            break;
+        case 36:
+            key.type = NORMAL;
+            key.value = 'j';
+            break;
+        case 37:
+            key.type = NORMAL;
+            key.value = 'k';
+            break;
+        case 38:
+            key.type = NORMAL;
+            key.value = 'l';
+            break;
+        case 44:
+            key.type = NORMAL;
+            key.value = 'z';
+            break;
+        case 45:
+            key.type = NORMAL;
+            key.value = 'x';
+            break;
+        case 46:
+            key.type = NORMAL;
+            key.value = 'c';
+            break;
+        case 47:
+            key.type = NORMAL;
+            key.value = 'v';
+            break;
+        case 48:
+            key.type = NORMAL;
+            key.value = 'b';
+            break;
+        case 49:
+            key.type = NORMAL;
+            key.value = 'n';
+            break;
+        case 50:
+            key.type = NORMAL;
+            key.value = 'm';
             break;
         default:
             key.type = UNKNOWN;
