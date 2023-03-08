@@ -70,7 +70,7 @@ void shell_exec()
         }
         else if (is_equal(buffer, "help", size) == true)
         {
-            term_write_string("help - Shows all commands.\nclear - Clears the screen.");
+            term_write_string("help - Shows all commands.\nclear - Clears the screen.\n");
         }
         else
         {
