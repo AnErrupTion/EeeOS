@@ -64,11 +64,22 @@ void shell_exec()
 
         int size = shell_read_line(buffer);
 
-        term_write_string("You typed: ");
-        for (int i = 0; i < size; i++)
+        if (is_equal(buffer, "clear", size) == true)
         {
-            term_write_char(buffer[i]);
+            term_clear();
         }
-        term_write_char('\n');
+        else if (is_equal(buffer, "help", size) == true)
+        {
+            term_write_string("help - Shows all commands.\nclear - Clears the screen.");
+        }
+        else
+        {
+            term_write_string("Unknown command: ");
+            for (int i = 0; i < size; i++)
+            {
+                term_write_char(buffer[i]);
+            }
+            term_write_char('\n');
+        }
     }
 }

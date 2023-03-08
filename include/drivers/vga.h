@@ -10,6 +10,7 @@
 
 #include "../std.h"
 
+void term_clear();
 void term_init();
 void term_set_color(uint8_t color);
 void term_write_char(char c);

@@ -48,12 +48,10 @@ static void term_put(char c, uint8_t color, size_t x, size_t y)
     terminal_buffer[index] = vga_entry(c, color);
 }
 
-void term_init()
+void term_clear()
 {
     terminal_row = 0;
     terminal_column = 0;
-    terminal_color = vga_entry_color(LIGHT_GRAY, BLACK);
-    terminal_buffer = (uint16_t*) 0xB8000;
 
     for (size_t y = 0; y < VGA_HEIGHT; y++)
     {
@@ -63,6 +61,14 @@ void term_init()
             terminal_buffer[index] = vga_entry(' ', terminal_color);
         }
     }
+}
+
+void term_init()
+{
+    terminal_color = vga_entry_color(LIGHT_GRAY, BLACK);
+    terminal_buffer = (uint16_t*) 0xB8000;
+
+    term_clear();
 }
 
 void term_set_color(uint8_t color)
