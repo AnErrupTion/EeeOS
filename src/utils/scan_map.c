@@ -120,6 +120,10 @@ key get_keyboard_key(uint8_t scan_code)
             key.type = NORMAL;
             key.value = 'm';
             break;
+        case 57:
+            key.type = NORMAL;
+            key.value = ' ';
+            break;
         default:
             key.type = UNKNOWN;
             break;
