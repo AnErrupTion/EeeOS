@@ -42,6 +42,13 @@ size_t itoa(uint64_t value, char* sp, int radix)
 
 bool is_equal(char* buffer, const char* cmp, size_t size)
 {
+    size_t cmp_size = strlen(cmp);
+
+    if (cmp_size != size)
+    {
+        return false;
+    }
+
     for (size_t i = 0; i < size; i++)
     {
         if (buffer[i] != cmp[i])
