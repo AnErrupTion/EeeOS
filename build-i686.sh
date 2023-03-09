@@ -8,8 +8,8 @@ nasm -f elf32 boot/i686/entry.asm -o bin/entry.o
 nasm -f elf32 boot/i686/helpers.asm -o bin/helpers.o
 nasm -f elf32 boot/i686/irqs.asm -o bin/irqs.o
 
-i686-elf-gcc -c src/i686/gdt.c -o bin/gdt.o ${C_FLAGS}
-i686-elf-gcc -c src/i686/idt.c -o bin/idt.o ${C_FLAGS}
+i686-elf-gcc -c src/x86/i686/gdt.c -o bin/gdt.o ${C_FLAGS}
+i686-elf-gcc -c src/x86/i686/idt.c -o bin/idt.o ${C_FLAGS}
 i686-elf-gcc -c src/x86/main.c -o bin/main.o ${C_FLAGS}
 i686-elf-gcc -c src/x86/port.c -o bin/port.o ${C_FLAGS}
 i686-elf-gcc -c src/x86/pic.c -o bin/pic.o ${C_FLAGS}
