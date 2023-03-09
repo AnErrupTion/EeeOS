@@ -4,8 +4,8 @@
 
 #include <stdint.h>
 
-#include "../../../include/idt.h"
-#include "../../../include/pic.h"
+#include "../include/idt.h"
+#include "../include/pic.h"
 #include "../../../include/panic.h"
 #include "../../../include/drivers/ps2.h"
 #include "../../../include/memory/pmm.h"

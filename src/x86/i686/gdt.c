@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 
-#include "../../../include/gdt.h"
+#include "../include/gdt.h"
 #include "../../../include/memory/pmm.h"
 
 #define GDT_ENTRIES 3

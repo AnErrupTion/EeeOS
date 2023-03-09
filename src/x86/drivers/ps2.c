@@ -4,7 +4,7 @@
 
 #include "../../../include/drivers/ps2.h"
 #include "../../../include/memory/pmm.h"
-#include "../../../include/pic.h"
+#include "../include/pic.h"
 #include "../../../include/port.h"
 
 #define DATA_PORT 0x60

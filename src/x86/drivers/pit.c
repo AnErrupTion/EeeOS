@@ -3,7 +3,7 @@
 //
 
 #include "../../../include/drivers/pit.h"
-#include "../../../include/pic.h"
+#include "../include/pic.h"
 
 void pit_init()
 {

@@ -2,7 +2,7 @@
 // Created by anerruption on 06/03/23.
 //
 
-#include "../../include/pic.h"
+#include "include/pic.h"
 #include "../../include/port.h"
 
 // Master PIC
