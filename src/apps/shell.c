@@ -9,9 +9,9 @@
 #include "../../include/utils/scan_map.h"
 #include "../../include/memory/pmm.h"
 
-int shell_read_line(char* buffer)
+size_t shell_read_line(char* buffer)
 {
-    int index = 0;
+    size_t index = 0;
 
     for (;;)
     {
@@ -100,7 +100,7 @@ void shell_exec()
         else
         {
             term_write_string("Unknown command: ");
-            for (int i = 0; i < size; i++)
+            for (size_t i = 0; i < size; i++)
             {
                 term_write_char(buffer[i]);
             }

@@ -112,6 +112,7 @@ typedef struct
 
     uint32_t flags;
 
+    // Works only in ACPI 2.0+ (in theory)
     generic_addr_struct reset_reg;
     uint8_t reset_value;
 
