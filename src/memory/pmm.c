@@ -158,7 +158,7 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
 
     // Find all unavailable address ranges
     address_range unavailable_address_ranges[memory_map_length];
-    map last_memory_map = NULL;
+    map last_memory_map;
     size_t range_size = 0;
     size_t index = 0;
 
@@ -169,7 +169,7 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
             break;
         }
 
-        if (last_memory_map == NULL)
+        if (index == 0)
         {
             last_memory_map = memory_maps[index++];
         }
