@@ -63,7 +63,7 @@ void shell_exec()
     {
         term_write_string("> ");
 
-        int size = shell_read_line(buffer);
+        size_t size = shell_read_line(buffer);
 
         if (is_equal(buffer, "help", size))
         {

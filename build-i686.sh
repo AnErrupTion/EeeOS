@@ -15,6 +15,7 @@ i686-elf-gcc -c src/x86/port.c -o bin/port.o ${C_FLAGS}
 i686-elf-gcc -c src/x86/pic.c -o bin/pic.o ${C_FLAGS}
 i686-elf-gcc -c src/x86/drivers/vga.c -o bin/vga.o ${C_FLAGS}
 i686-elf-gcc -c src/x86/drivers/ps2.c -o bin/ps2.o ${C_FLAGS}
+i686-elf-gcc -c src/x86/drivers/pit.c -o bin/pit.o ${C_FLAGS}
 i686-elf-gcc -c src/x86/drivers/acpi.c -o bin/acpi.o ${C_FLAGS}
 i686-elf-gcc -c src/std.c -o bin/std.o ${C_FLAGS}
 i686-elf-gcc -c src/panic.c -o bin/panic.o ${C_FLAGS}

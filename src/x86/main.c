@@ -4,6 +4,7 @@
 
 #include "../../include/drivers/vga.h"
 #include "../../include/drivers/ps2.h"
+#include "../../include/drivers/pit.h"
 #include "../../include/drivers/acpi.h"
 #include "../../include/apps/shell.h"
 #include "../../include/memory/pmm.h"
@@ -35,6 +36,9 @@ void kernel_main(multiboot_info* info)
 
     term_write_string("Initializing PS/2...\n");
     ps2_init();
+
+    term_write_string("Initializing PIT...\n");
+    pit_init();
 
     term_write_string("Initializing ACPI...\n");
     acpi_init();
