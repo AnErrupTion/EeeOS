@@ -11,40 +11,12 @@
 #include "../include/apps/shell.h"
 #include "../include/memory/pmm.h"
 
-void test_alloc()
-{
-    char* int_str = (char*)memory_alloc(16);
-
-    uint8_t* buffer = memory_alloc(10);
-
-    size_t len = itoa((uint32_t)buffer, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
-
-    buffer = memory_alloc(8192);
-    len = itoa((uint32_t)buffer, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
-
-    buffer = memory_alloc(660000);
-    len = itoa((uint32_t)buffer, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
-
-    buffer = memory_alloc(2048);
-    len = itoa((uint32_t)buffer, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
-}
-
 void kernel_main(multiboot_info* info)
 {
     term_init();
 
     term_write_string("Initializing PMM...\n");
     pmm_init(info->memory_upper * 1024, info->memory_map, info->memory_map_length);
-
-    test_alloc();
 
     // Disable interrupts just to be sure
     asm("cli");
