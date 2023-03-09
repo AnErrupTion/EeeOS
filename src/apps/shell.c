@@ -14,6 +14,8 @@ int shell_read_line(char* buffer)
 
     for (;;)
     {
+        asm("hlt");
+
         uint8_t scan_code = ps2_get_scan_code();
 
         if (scan_code == 0)
@@ -51,12 +53,10 @@ int shell_read_line(char* buffer)
 
 void shell_exec()
 {
-    char* buffer = (char*) memory_alloc(1024);
+    char* buffer = (char*)memory_alloc(1024);
+    char* int_str = (char*)memory_alloc(16);
 
-    char int_str[10];
-    size_t len = itoa((uint32_t)buffer, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
+    size_t len;
 
     for (;;)
     {
@@ -64,13 +64,27 @@ void shell_exec()
 
         int size = shell_read_line(buffer);
 
-        if (is_equal(buffer, "clear", size) == true)
+        if (is_equal(buffer, "help", size))
+        {
+            term_write_string("help - Shows all commands.\nclear - Clears the screen.\nusedram - Shows the amount of used memory, in kilobytes.\ntotalram - Shows the total amount of usable memory, in megabytes.\n");
+        }
+        else if (is_equal(buffer, "clear", size))
         {
             term_clear();
         }
-        else if (is_equal(buffer, "help", size) == true)
+        else if (is_equal(buffer, "usedram", size))
         {
-            term_write_string("help - Shows all commands.\nclear - Clears the screen.\n");
+            term_write_string("RAM in use: ");
+            len = itoa(get_pages_in_use() * get_page_size() / 1024, int_str, 10);
+            term_write(int_str, len);
+            term_write_string("K\n");
+        }
+        else if (is_equal(buffer, "totalram", size))
+        {
+            term_write_string("Total usable memory: ");
+            len = itoa(get_total_usable_memory() / 1024 / 1024, int_str, 10);
+            term_write(int_str, len);
+            term_write_string("M\n");
         }
         else
         {

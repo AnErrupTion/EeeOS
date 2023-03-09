@@ -6,7 +6,6 @@
 
 #include "../../include/memory/pmm.h"
 #include "../../include/std.h"
-#include "../../include/drivers/vga.h"
 #include "../../include/panic.h"
 
 #define PAGE_SIZE 4096 // Size of one page
@@ -20,6 +19,12 @@ typedef struct
     uint64_t size;
 } map;
 
+typedef struct
+{
+    uint64_t from;
+    uint64_t to;
+} address_range;
+
 bitmap_unit* bitmap;
 
 size_t number_of_maps = 0; // Number of available Multiboot 2 memory map entries
@@ -27,14 +32,11 @@ size_t total_pages = 0; // Number of available pages
 size_t bitmap_size = 0; // Size of the bitmap
 size_t number_of_pages = 0; // Number of pages to allocate to store bitmap_size pages
 size_t pages_in_use = 0; // Number of pages that are currently in use
+size_t total_size = 0; // Total usable RAM, in bytes
 
-// TODO: Mark pages not available (like 640k-0x100000) as "allocated"
-void initialize_bitmap(map best_map)
+void initialize_bitmap(map best_map, address_range* unavailable_address_ranges, size_t size)
 {
     bitmap = (uint8_t*)best_map.address;
-
-    size_t satisfied_pages = 0;
-    size_t index = 0;
 
     // Initialize bitmap by setting all the pages free
     for (size_t i = 0; i < bitmap_size; i++)
@@ -42,7 +44,37 @@ void initialize_bitmap(map best_map)
         bitmap[i] = 0;
     }
 
+    // Mark unavailable pages as "allocated"
+    size_t address = 0;
+    size_t idx = 0;
+
+    while (idx < bitmap_size)
+    {
+        bitmap_unit unit = bitmap[idx];
+
+        for (size_t i = 0; i < BITMAP_UNIT_SIZE; i++)
+        {
+            for (size_t j = 0; j < size; j++)
+            {
+                address_range range = unavailable_address_ranges[j];
+                // The address is in an unavailable range, mark it as "allocated"
+                if (address > range.from && address < range.to)
+                {
+                    unit |= 1 << i;
+                    bitmap[idx] = unit;
+                }
+            }
+
+            address += PAGE_SIZE;
+        }
+
+        idx++;
+    }
+
     // Reserve number_of_pages pages for bitmap, in the bitmap itself
+    size_t satisfied_pages = 0;
+    size_t index = 0;
+
     for (;;)
     {
         bitmap_unit unit = bitmap[index];
@@ -76,14 +108,9 @@ void initialize_bitmap(map best_map)
 
 void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map, size_t memory_map_length)
 {
-    char int_str[15];
-    size_t len;
-
-    size_t total_size = 0;
-
+    // Find all available memory map entries
     map memory_maps[memory_map_length];
 
-    // Find all available memory map entries
     for (size_t i = 0; i < memory_map_length; i++)
     {
         multiboot_memory_map_entry entry = memory_map[i];
@@ -91,14 +118,6 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
         // See https://en.wikipedia.org/wiki/PCI_hole
         if (entry.type == 1 && entry.address <= max_memory_address) // Available && writable
         {
-            term_write_string("Entry at address 0x");
-            len = itoa(entry.address, int_str, 16);
-            term_write(int_str, len);
-            term_write_string(" of size 0x");
-            len = itoa(entry.size, int_str, 16);
-            term_write(int_str, len);
-            term_write_char('\n');
-
             map current_map = {
                     .address = entry.address,
                     .size = entry.size
@@ -110,30 +129,10 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
         }
     }
 
-    term_write_string("Total usable memory: ");
-    len = itoa(total_size / 1024 / 1024, int_str, 10);
-    term_write(int_str, len);
-    term_write_string("M\n");
-
     // Calculate the required values
     total_pages = total_size / PAGE_SIZE;
     bitmap_size = DIV_ROUNDUP(total_pages, BITMAP_UNIT_SIZE);
     number_of_pages = DIV_ROUNDUP(bitmap_size, PAGE_SIZE);
-
-    term_write_string("Total pages: ");
-    len = itoa(total_pages, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
-
-    term_write_string("Bitmap size: ");
-    len = itoa(bitmap_size, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
-
-    term_write_string("Number of pages: ");
-    len = itoa(number_of_pages, int_str, 10);
-    term_write(int_str, len);
-    term_write_char('\n');
 
     // Find a memory map for bitmap
     map best_map;
@@ -151,14 +150,43 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
         }
     }
 
-    if (found_map == false)
+    if (!found_map)
     {
         abort("PMM: unable to initialize: not enough memory.");
         return;
     }
 
-    // Initialize the bitmap with the memory map we found
-    initialize_bitmap(best_map);
+    // Find all unavailable address ranges
+    address_range unavailable_address_ranges[memory_map_length];
+    map last_memory_map = NULL;
+    size_t range_size = 0;
+    size_t index = 0;
+
+    while (index < number_of_maps)
+    {
+        if (number_of_maps == 1)
+        {
+            break;
+        }
+
+        if (last_memory_map == NULL)
+        {
+            last_memory_map = memory_maps[index++];
+        }
+
+        map memory_map = memory_maps[index++];
+
+        address_range range = {
+                .from = last_memory_map.address + last_memory_map.size,
+                .to = memory_map.address
+        };
+
+        unavailable_address_ranges[range_size++] = range;
+        last_memory_map = memory_map;
+    }
+
+    // Initialize the bitmap with the memory map (and the unavailable address range) we found
+    initialize_bitmap(best_map, unavailable_address_ranges, range_size);
 
     // At this point, we are using number_of_pages pages
     pages_in_use = number_of_pages;
@@ -172,6 +200,11 @@ size_t get_pages_in_use()
 size_t get_page_size()
 {
     return PAGE_SIZE;
+}
+
+size_t get_total_usable_memory()
+{
+    return total_size;
 }
 
 uint8_t* memory_alloc(size_t size)

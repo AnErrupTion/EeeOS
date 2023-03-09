@@ -13,26 +13,28 @@
 
 void test_alloc()
 {
-    char* int_str = (char*)memory_alloc(10);
+    char* int_str = (char*)memory_alloc(16);
 
-    size_t len = itoa((uint32_t)int_str, int_str, 10);
+    uint8_t* buffer = memory_alloc(10);
+
+    size_t len = itoa((uint32_t)buffer, int_str, 10);
     term_write(int_str, len);
     term_write_char('\n');
 
-    int_str = (char*)memory_alloc(8192);
-    len = itoa((uint32_t)int_str, int_str, 10);
+    buffer = memory_alloc(8192);
+    len = itoa((uint32_t)buffer, int_str, 10);
     term_write(int_str, len);
     term_write_char('\n');
 
-    int_str = (char*)memory_alloc(2048);
-    len = itoa((uint32_t)int_str, int_str, 10);
+    buffer = memory_alloc(660000);
+    len = itoa((uint32_t)buffer, int_str, 10);
     term_write(int_str, len);
     term_write_char('\n');
 
-    term_write_string("RAM in use: ");
-    len = itoa((get_pages_in_use() * get_page_size()) / 1024, int_str, 10);
+    buffer = memory_alloc(2048);
+    len = itoa((uint32_t)buffer, int_str, 10);
     term_write(int_str, len);
-    term_write_string("K\n");
+    term_write_char('\n');
 }
 
 void kernel_main(multiboot_info* info)

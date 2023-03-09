@@ -5,6 +5,9 @@
 #include <stdint.h>
 
 #include "../include/gdt.h"
+#include "../include/memory/pmm.h"
+
+#define GDT_ENTRIES 3
 
 extern void load_gdt(uint32_t gdtr);
 
@@ -24,7 +27,7 @@ typedef struct
     uint8_t base_high;   // Upper 8 bits of segment base address
 } __attribute__((packed)) gdt_entry;
 
-gdt_entry gdt_entries[3];
+gdt_entry* gdt_entries;
 
 void gdt_add_segment(uint32_t index, uint32_t address, uint32_t limit, uint8_t access, uint8_t granularity)
 {
@@ -42,12 +45,17 @@ void gdt_add_segment(uint32_t index, uint32_t address, uint32_t limit, uint8_t a
 
 void gdt_init()
 {
+    // Initialize buffer
+    gdt_entries = (gdt_entry*)memory_alloc(GDT_ENTRIES * sizeof(gdt_entry));
+
+    // Add all segments into GDT
     gdt_add_segment(0, 0, 0, 0, 0); // Null segment
     gdt_add_segment(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); // Code segment
     gdt_add_segment(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // Data segment
 
+    // Load GDT
     gdtr gdt = {
-            .size = (sizeof(gdt_entry) * sizeof(gdt_entries)) - 1,
+            .size = (sizeof(gdt_entry) * GDT_ENTRIES) - 1,
             .offset = (uint32_t)gdt_entries
     };
 

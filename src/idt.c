@@ -8,6 +8,9 @@
 #include "../include/pic.h"
 #include "../include/panic.h"
 #include "../include/drivers/ps2.h"
+#include "../include/memory/pmm.h"
+
+#define IDT_ENTRIES 256
 
 void interrupt_handler(uint32_t irq)
 {
@@ -334,7 +337,7 @@ typedef struct
     uint16_t offset_2; // Offset bits 16..31
 } __attribute__((packed)) idt_entry;
 
-idt_entry idt_entries[256];
+idt_entry* idt_entries;
 
 void idt_add_table(uint32_t index, uint32_t offset)
 {
@@ -364,6 +367,8 @@ void idt_add_table(uint32_t index, uint32_t offset)
 
 void idt_init()
 {
+    idt_entries = (idt_entry*)memory_alloc(IDT_ENTRIES * sizeof(idt_entry));
+
     idt_add_table(0, (uint32_t)irq0);
     idt_add_table(1, (uint32_t)irq1);
     idt_add_table(2, (uint32_t)irq2);
@@ -622,7 +627,7 @@ void idt_init()
     idt_add_table(255, (uint32_t)irq255);
 
     idtr idt = {
-            .size = (sizeof(idt_entry) * sizeof(idt_entries)) - 1,
+            .size = (sizeof(idt_entry) * IDT_ENTRIES) - 1,
             .offset = (uint32_t)idt_entries
     };
 
