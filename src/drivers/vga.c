@@ -112,12 +112,6 @@ void term_write_char(char c)
     {
         terminal_column = 0;
         terminal_row++;
-
-        if (terminal_row == VGA_HEIGHT - 1)
-        {
-            term_scroll_up();
-        }
-
         return;
     }
     else if (c == '\r')
@@ -131,7 +125,13 @@ void term_write_char(char c)
         return;
     }
 
-    // Else, print it
+    // Check if we need to scroll up
+    if (terminal_row == VGA_HEIGHT - 1)
+    {
+        term_scroll_up();
+    }
+
+    // Print the character if it's not special
     term_put(c, terminal_color, terminal_column, terminal_row);
 
     if (++terminal_column == VGA_WIDTH)
