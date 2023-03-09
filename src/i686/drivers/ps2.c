@@ -2,10 +2,10 @@
 // Created by anerruption on 06/03/23.
 //
 
-#include "../../include/drivers/ps2.h"
-#include "../../include/memory/pmm.h"
-#include "../../include/pic.h"
-#include "../../include/port.h"
+#include "../../../include/drivers/ps2.h"
+#include "../../../include/memory/pmm.h"
+#include "../../../include/pic.h"
+#include "../../../include/port.h"
 
 #define DATA_PORT 0x60
 #define STATUS_PORT 0x64

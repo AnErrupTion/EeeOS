@@ -2,10 +2,10 @@
 // Created by anerruption on 09/03/23.
 //
 
-#include "../../include/drivers/acpi.h"
-#include "../../include/drivers/vga.h"
-#include "../../include/panic.h"
-#include "../../include/port.h"
+#include "../../../include/drivers/acpi.h"
+#include "../../../include/drivers/vga.h"
+#include "../../../include/panic.h"
+#include "../../../include/port.h"
 
 acpi_fadt* fadt;
 

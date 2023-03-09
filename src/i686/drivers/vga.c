@@ -2,8 +2,8 @@
 // Created by anerruption on 05/03/23.
 //
 
-#include "../../include/drivers/vga.h"
-#include "../../include/port.h"
+#include "../../../include/drivers/vga.h"
+#include "../../../include/port.h"
 
 enum vga_color {
     BLACK = 0,

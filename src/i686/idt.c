@@ -4,11 +4,11 @@
 
 #include <stdint.h>
 
-#include "../include/idt.h"
-#include "../include/pic.h"
-#include "../include/panic.h"
-#include "../include/drivers/ps2.h"
-#include "../include/memory/pmm.h"
+#include "../../include/idt.h"
+#include "../../include/pic.h"
+#include "../../include/panic.h"
+#include "../../include/drivers/ps2.h"
+#include "../../include/memory/pmm.h"
 
 #define IDT_ENTRIES 256
 

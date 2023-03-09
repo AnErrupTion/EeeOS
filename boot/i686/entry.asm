@@ -22,9 +22,9 @@ align 4
 ; (esp) and it is up to the kernel to provide a stack. This allocates room for a
 ; small stack by creating a symbol at the bottom of it, then allocating 16384
 ; bytes for it, and finally creating a symbol at the top. The stack grows
-; downwards on x86. The stack is in its own section so it can be marked nobits,
+; downwards on i686. The stack is in its own section so it can be marked nobits,
 ; which means the kernel file is smaller because it does not contain an
-; uninitialized stack. The stack on x86 must be 16-byte aligned according to the
+; uninitialized stack. The stack on i686 must be 16-byte aligned according to the
 ; System V ABI standard and de-facto extensions. The compiler will assume the
 ; stack is properly aligned and failure to align the stack will result in
 ; undefined behavior.
@@ -41,7 +41,7 @@ stack_top:
 section .text
 global _start:function (_start.end - _start)
 _start:
-	; The bootloader has loaded us into 32-bit protected mode on a x86
+	; The bootloader has loaded us into 32-bit protected mode on a i686
 	; machine. Interrupts are disabled. Paging is disabled. The processor
 	; state is as defined in the multiboot standard. The kernel has full
 	; control of the CPU. The kernel can only make use of hardware features
@@ -53,7 +53,7 @@ _start:
 	; machine.
 
 	; To set up a stack, we set the esp register to point to the top of our
-	; stack (as it grows downwards on x86 systems). This is necessarily done
+	; stack (as it grows downwards on i686 systems). This is necessarily done
 	; in assembly as languages such as C cannot function without a stack.
     mov esp, stack_top
 

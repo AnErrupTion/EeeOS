@@ -2,8 +2,8 @@
 // Created by anerruption on 06/03/23.
 //
 
-#include "../include/pic.h"
-#include "../include/port.h"
+#include "../../include/pic.h"
+#include "../../include/port.h"
 
 // Master PIC
 #define PIC1_COMMAND 0x0020

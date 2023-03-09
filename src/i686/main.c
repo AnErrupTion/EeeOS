@@ -2,14 +2,14 @@
 // Created by anerruption on 05/03/23.
 //
 
-#include "../include/drivers/vga.h"
-#include "../include/drivers/ps2.h"
-#include "../include/drivers/acpi.h"
-#include "../include/apps/shell.h"
-#include "../include/memory/pmm.h"
-#include "../include/gdt.h"
-#include "../include/pic.h"
-#include "../include/idt.h"
+#include "../../include/drivers/vga.h"
+#include "../../include/drivers/ps2.h"
+#include "../../include/drivers/acpi.h"
+#include "../../include/apps/shell.h"
+#include "../../include/memory/pmm.h"
+#include "../../include/gdt.h"
+#include "../../include/pic.h"
+#include "../../include/idt.h"
 
 void kernel_main(multiboot_info* info)
 {

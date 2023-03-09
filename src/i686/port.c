@@ -2,7 +2,7 @@
 // Created by anerruption on 06/03/23.
 //
 
-#include "../include/port.h"
+#include "../../include/port.h"
 
 void outb(uint16_t port, uint8_t value)
 {
