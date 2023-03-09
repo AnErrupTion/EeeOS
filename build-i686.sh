@@ -1,24 +1,26 @@
 #!/bin/sh
 
+C_FLAGS="-std=gnu2x -ffreestanding -O2 -Wall -Wextra"
+
 mkdir bin
 
 nasm -f elf32 boot/i686/entry.asm -o bin/entry.o
 nasm -f elf32 boot/i686/helpers.asm -o bin/helpers.o
 nasm -f elf32 boot/i686/irqs.asm -o bin/irqs.o
 
-i686-elf-gcc -c src/i686/main.c -o bin/main.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/i686/gdt.c -o bin/gdt.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/i686/idt.c -o bin/idt.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/i686/port.c -o bin/port.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/i686/pic.c -o bin/pic.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/i686/drivers/vga.c -o bin/vga.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/i686/drivers/ps2.c -o bin/ps2.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/i686/drivers/acpi.c -o bin/acpi.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/std.c -o bin/std.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/panic.c -o bin/panic.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/apps/shell.c -o bin/shell.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/utils/scan_map.c -o bin/scan_map.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c src/memory/pmm.c -o bin/pmm.o -std=gnu2x -ffreestanding -O2 -Wall -Wextra
+i686-elf-gcc -c src/i686/main.c -o bin/main.o ${C_FLAGS}
+i686-elf-gcc -c src/i686/gdt.c -o bin/gdt.o ${C_FLAGS}
+i686-elf-gcc -c src/i686/idt.c -o bin/idt.o ${C_FLAGS}
+i686-elf-gcc -c src/i686/port.c -o bin/port.o ${C_FLAGS}
+i686-elf-gcc -c src/i686/pic.c -o bin/pic.o ${C_FLAGS}
+i686-elf-gcc -c src/i686/drivers/vga.c -o bin/vga.o ${C_FLAGS}
+i686-elf-gcc -c src/i686/drivers/ps2.c -o bin/ps2.o ${C_FLAGS}
+i686-elf-gcc -c src/i686/drivers/acpi.c -o bin/acpi.o ${C_FLAGS}
+i686-elf-gcc -c src/std.c -o bin/std.o ${C_FLAGS}
+i686-elf-gcc -c src/panic.c -o bin/panic.o ${C_FLAGS}
+i686-elf-gcc -c src/apps/shell.c -o bin/shell.o ${C_FLAGS}
+i686-elf-gcc -c src/utils/scan_map.c -o bin/scan_map.o ${C_FLAGS}
+i686-elf-gcc -c src/memory/pmm.c -o bin/pmm.o ${C_FLAGS}
 
 mkdir bin/iso
 
