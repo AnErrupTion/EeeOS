@@ -66,7 +66,7 @@ void shell_exec()
 
         if (is_equal(buffer, "help", size))
         {
-            term_write_string("help - Shows all commands.\nclear - Clears the screen.\nusedram - Shows the amount of used memory, in kilobytes.\ntotalram - Shows the total amount of usable memory, in megabytes.\n");
+            term_write_string("help - Shows all commands.\nclear - Clears the screen.\nusedram - Shows the amount of used memory, in KiB.\ntotalram - Shows the total amount of usable memory, in MiB.\n");
         }
         else if (is_equal(buffer, "clear", size))
         {
