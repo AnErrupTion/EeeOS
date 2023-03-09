@@ -3,6 +3,7 @@
 //
 
 #include "../include/std.h"
+#include "../include/memory/pmm.h"
 
 size_t strlen(const char* str)
 {
@@ -15,8 +16,8 @@ size_t strlen(const char* str)
 //https://stackoverflow.com/a/12386915
 size_t itoa(uint64_t value, char* sp, int radix)
 {
-    char tmp[16]; // be careful with the length of the buffer
-    char *tp = tmp;
+    char* tmp = (char*)memory_alloc(16); // be careful with the length of the buffer
+    char* tp = tmp;
 
     uint64_t i;
     uint64_t v = value;

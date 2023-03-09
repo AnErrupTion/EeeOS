@@ -3,6 +3,7 @@
 //
 
 #include "../../include/drivers/ps2.h"
+#include "../../include/memory/pmm.h"
 #include "../../include/pic.h"
 #include "../../include/port.h"
 
@@ -12,7 +13,7 @@
 
 #define FIFO_SIZE 256
 
-uint8_t fifo_buffer[FIFO_SIZE];
+uint8_t* fifo_buffer;
 uint32_t fifo_start = 0;
 uint32_t fifo_end = 0;
 
@@ -43,6 +44,9 @@ void ps2_on_interrupt()
 
 void ps2_init()
 {
+    // Initialize FIFO buffer
+    fifo_buffer = memory_alloc(FIFO_SIZE);
+
     // Enable keyboard handler in PIC (IRQ 1)
     pic_clear_irq_mask(1);
 }
