@@ -34,9 +34,9 @@ size_t number_of_pages = 0; // Number of pages to allocate to store bitmap_size 
 size_t pages_in_use = 0; // Number of pages that are currently in use
 size_t total_size = 0; // Total usable RAM, in bytes
 
-void initialize_bitmap(map best_map, address_range* unavailable_address_ranges, size_t size)
+void initialize_bitmap(uint32_t address, address_range* unavailable_address_ranges, size_t size)
 {
-    bitmap = (uint8_t*)best_map.address;
+    bitmap = (uint8_t*)address;
 
     // Initialize bitmap by setting all the pages free
     for (size_t i = 0; i < bitmap_size; i++)
@@ -186,7 +186,7 @@ void pmm_init(size_t max_memory_address, multiboot_memory_map_entry* memory_map,
     }
 
     // Initialize the bitmap with the memory map (and the unavailable address range) we found
-    initialize_bitmap(best_map, unavailable_address_ranges, range_size);
+    initialize_bitmap(best_map.address, unavailable_address_ranges, range_size);
 
     // At this point, we are using number_of_pages pages
     pages_in_use = number_of_pages;
@@ -255,5 +255,5 @@ uint8_t* memory_alloc(size_t size)
 
 void memory_free(uint8_t* buffer)
 {
-
+    // TODO
 }
