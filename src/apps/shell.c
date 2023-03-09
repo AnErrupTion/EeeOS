@@ -5,6 +5,7 @@
 #include "../../include/apps/shell.h"
 #include "../../include/drivers/vga.h"
 #include "../../include/drivers/ps2.h"
+#include "../../include/drivers/acpi.h"
 #include "../../include/utils/scan_map.h"
 #include "../../include/memory/pmm.h"
 
@@ -66,7 +67,7 @@ void shell_exec()
 
         if (is_equal(buffer, "help", size))
         {
-            term_write_string("help - Shows all commands.\nclear - Clears the screen.\nusedram - Shows the amount of used memory, in KiB.\ntotalram - Shows the total amount of usable memory, in MiB.\n");
+            term_write_string("help - Shows all commands.\nclear - Clears the screen.\nusedram - Shows the amount of used memory, in KiB.\ntotalram - Shows the total amount of usable memory, in MiB.\nshutdown - Shuts down the PC via ACPI.\nreset - Resets the PC via ACPI.\n");
         }
         else if (is_equal(buffer, "clear", size))
         {
@@ -85,6 +86,16 @@ void shell_exec()
             len = itoa(get_total_usable_memory() / 1024 / 1024, int_str, 10);
             term_write(int_str, len);
             term_write_string("M\n");
+        }
+        else if (is_equal(buffer, "shutdown", size))
+        {
+            term_write_string("Shutting down...\n");
+            acpi_shutdown();
+        }
+        else if (is_equal(buffer, "reset", size))
+        {
+            term_write_string("Resetting...\n");
+            acpi_reset();
         }
         else
         {
