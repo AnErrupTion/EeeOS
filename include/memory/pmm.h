@@ -15,6 +15,6 @@ size_t get_pages_in_use();
 size_t get_page_size();
 size_t get_total_usable_memory();
 uint8_t* memory_alloc(size_t size);
-void memory_free(uint8_t* buffer);
+void memory_free(uint8_t* buffer, size_t size);
 
 #endif //EEEOS_PMM_H

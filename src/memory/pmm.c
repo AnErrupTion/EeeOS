@@ -34,9 +34,9 @@ size_t number_of_pages = 0; // Number of pages to allocate to store bitmap_size 
 size_t pages_in_use = 0; // Number of pages that are currently in use
 size_t total_size = 0; // Total usable RAM, in bytes
 
-void initialize_bitmap(uint32_t address, address_range* unavailable_address_ranges, size_t size)
+void initialize_bitmap(uint32_t best_map_address, address_range* unavailable_address_ranges, size_t size)
 {
-    bitmap = (uint8_t*)address;
+    bitmap = (uint8_t*)best_map_address;
 
     // Initialize bitmap by setting all the pages free
     for (size_t i = 0; i < bitmap_size; i++)
@@ -253,7 +253,47 @@ uint8_t* memory_alloc(size_t size)
     }
 }
 
-void memory_free(uint8_t* buffer)
+void memory_free(uint8_t* buffer, size_t size)
 {
-    // TODO
+    // Calculate the required values
+    size_t sz = size;
+    while (sz % PAGE_SIZE != 0)
+    {
+        sz++;
+    }
+
+    size_t required_pages = sz / PAGE_SIZE;
+    size_t satisfied_pages = 0;
+    size_t index = 0;
+    size_t address = 0;
+
+    uint32_t buffer_address = (uint32_t)buffer;
+
+    for (;;)
+    {
+        bitmap_unit unit = bitmap[index];
+
+        for (size_t i = 0; i < BITMAP_UNIT_SIZE; i++)
+        {
+            // We have freed the required number of pages, we can safely return now.
+            if (satisfied_pages == required_pages)
+            {
+                pages_in_use -= satisfied_pages;
+                return;
+            }
+
+            if (address == buffer_address)
+            {
+                satisfied_pages++;
+                unit &= ~(1 << i);
+                bitmap[index] = unit;
+            }
+            else
+            {
+                address += PAGE_SIZE;
+            }
+        }
+
+        index++;
+    }
 }
