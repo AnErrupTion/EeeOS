@@ -1,0 +1,18 @@
+pub const screenColor = enum(u8) {
+    black = 0,
+    blue,
+    green,
+    cyan,
+    red,
+    magenta,
+    brown,
+    lightGrey,
+    darkGrey,
+    lightBlue,
+    lightGreen,
+    lightCyan,
+    lightRed,
+    lightMagenta,
+    lightBrown,
+    white,
+};
