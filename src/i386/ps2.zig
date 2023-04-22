@@ -1,6 +1,6 @@
 const pic = @import("pic.zig");
 const port = @import("port.zig");
-const stack = @import("../stack.zig");
+const pmm = @import("../memory/pmm.zig");
 
 const DATA_PORT = 0x60;
 const STATUS_PORT = 0x64;
@@ -37,9 +37,10 @@ pub fn onInterrupt() void {
 
 pub fn init() void {
     // Initialize FIFO buffer
-    fifo_buffer = stack.allocator.alloc(u8, FIFO_SIZE) catch unreachable;
-    stack.allocated_bytes += FIFO_SIZE;
+    var fifo_buffer_address = pmm.allocate(FIFO_SIZE);
+    var fifo_buffer_pointer = @intToPtr([*]u8, fifo_buffer_address);
 
+    fifo_buffer = fifo_buffer_pointer[0..FIFO_SIZE];
     fifo_buffer_initialized = true;
 
     // Enable keyboard handler in PIC (IRQ 1)

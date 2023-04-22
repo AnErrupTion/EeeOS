@@ -1,6 +1,7 @@
 const std = @import("std");
 const terminal = @import("../terminal.zig");
 
+const mmu = @import("mmu.zig");
 const gdt = @import("gdt.zig");
 const idt = @import("idt.zig");
 const pic = @import("pic.zig");
@@ -10,6 +11,9 @@ pub var acpiRsdpAddress: usize = undefined;
 
 pub fn init() void {
     asm volatile ("cli");
+
+    terminal.writeLine("  [mmu] init");
+    mmu.init();
 
     terminal.writeLine("  [gdt] init");
     gdt.init();

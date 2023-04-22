@@ -49,8 +49,10 @@ fn read_line() usize {
 }
 
 pub fn exec() void {
-    buffer = stack.allocator.alloc(u8, BUFFER_SIZE) catch unreachable;
-    stack.allocated_bytes += BUFFER_SIZE;
+    var buffer_address = pmm.allocate(BUFFER_SIZE);
+    var buffer_pointer = @intToPtr([*]u8, buffer_address);
+
+    buffer = buffer_pointer[0..BUFFER_SIZE];
 
     while (true) {
         terminal.write("> ");
@@ -63,29 +65,17 @@ pub fn exec() void {
                 \\help - Shows all commands.
                 \\usedram - Shows the amount of used RAM, in KiB.
                 \\totalram - Shows the total amount of usable RAM, in MiB.
-                \\usedstackmem - Shows the amount of used stack memory, in KiB.
-                \\totalstackmem - Shows the total amount of usable stack memory, in KiB.
                 \\shutdown - Shuts down the computer via ACPI.
                 \\reset - Resets the computer via ACPI.
             );
         } else if (std.mem.eql(u8, command, "clear")) {
             terminal.clear();
         } else if (std.mem.eql(u8, command, "usedram")) {
-            var format = std.fmt.allocPrint(stack.allocator, "RAM in use: {d}K", .{pmm.pages_in_use * pmm.PAGE_SIZE / 1024}) catch unreachable;
+            var format = std.fmt.bufPrint(&stack.buffer, "RAM in use: {d}K", .{pmm.pages_in_use * pmm.PAGE_SIZE / 1024}) catch unreachable;
             terminal.writeLine(format);
-            stack.allocator.free(format);
         } else if (std.mem.eql(u8, command, "totalram")) {
-            var format = std.fmt.allocPrint(stack.allocator, "Total usable RAM: {d}M", .{pmm.total_size / 1024 / 1024}) catch unreachable;
+            var format = std.fmt.bufPrint(&stack.buffer, "Total usable RAM: {d}M", .{pmm.total_size / 1024 / 1024}) catch unreachable;
             terminal.writeLine(format);
-            stack.allocator.free(format);
-        } else if (std.mem.eql(u8, command, "usedstackmem")) {
-            var format = std.fmt.allocPrint(stack.allocator, "Stack memory in use: {d}K", .{stack.allocated_bytes / 1024}) catch unreachable;
-            terminal.writeLine(format);
-            stack.allocator.free(format);
-        } else if (std.mem.eql(u8, command, "totalstackmem")) {
-            var format = std.fmt.allocPrint(stack.allocator, "Total usable stack memory: {d}K", .{stack.SIZE / 1024}) catch unreachable;
-            terminal.writeLine(format);
-            stack.allocator.free(format);
         } else if (std.mem.eql(u8, command, "shutdown")) {
             terminal.writeLine("Shutting down...");
             acpi.shutdown();

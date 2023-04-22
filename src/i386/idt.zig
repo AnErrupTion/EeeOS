@@ -1,5 +1,5 @@
 const std = @import("std");
-const stack = @import("../stack.zig");
+const pmm = @import("../memory/pmm.zig");
 const pic = @import("pic.zig");
 const ps2 = @import("ps2.zig");
 
@@ -17,31 +17,26 @@ const idt_entry = packed struct {
 const idtr = packed struct { size: u16, offset: u32 };
 
 fn create_entry(offset: u32) idt_entry {
-    var type_attr = stack.allocator.create(type_attrib) catch unreachable;
-    stack.allocated_bytes += @sizeOf(type_attrib);
+    var type_attr = type_attrib{
+        .gate_type = 0b1110,
+        .zero = 0b0,
+        .dpl = 0b00,
+        .p = 0b1,
+    };
 
-    type_attr.gate_type = 0b1110;
-    type_attr.zero = 0b0;
-    type_attr.dpl = 0b00;
-    type_attr.p = 0b1;
+    var segment_sel = segment_select{
+        .rpl = 0b00,
+        .ti = 0b0,
+        .index = 0b0000000000001,
+    };
 
-    var segment_sel = stack.allocator.create(segment_select) catch unreachable;
-    stack.allocated_bytes += @sizeOf(segment_select);
-
-    segment_sel.rpl = 0b00;
-    segment_sel.ti = 0b0;
-    segment_sel.index = 0b0000000000001;
-
-    var entry = stack.allocator.create(idt_entry) catch unreachable;
-    stack.allocated_bytes += @sizeOf(idt_entry);
-
-    entry.offset1 = @intCast(u16, offset & 0xFFFF);
-    entry.selector = segment_sel.*;
-    entry.zero = 0;
-    entry.type_attributes = type_attr.*;
-    entry.offset2 = @intCast(u16, (offset >> 16) & 0xFFFF);
-
-    return entry.*;
+    return idt_entry{
+        .offset1 = @intCast(u16, offset & 0xFFFF),
+        .selector = segment_sel,
+        .zero = 0,
+        .type_attributes = type_attr,
+        .offset2 = @intCast(u16, (offset >> 16) & 0xFFFF),
+    };
 }
 
 fn interrupt_handler(irq: u8, code: u32) void {
@@ -927,8 +922,10 @@ fn irq255() callconv(.Interrupt) void {
 
 pub fn init() void {
     // Initialize buffer and add all entries
-    var idt_entries = stack.allocator.alloc(idt_entry, IDT_ENTRIES) catch unreachable;
-    stack.allocated_bytes += IDT_ENTRIES * @sizeOf(idt_entry);
+    const idt_entries_size = @sizeOf(idt_entry) * IDT_ENTRIES;
+
+    var idt_entries_address = pmm.allocate(idt_entries_size);
+    var idt_entries = @intToPtr([*]idt_entry, idt_entries_address);
 
     idt_entries[0] = create_entry(@as(u32, @ptrToInt(&irq0)));
     idt_entries[1] = create_entry(@as(u32, @ptrToInt(&irq1)));
@@ -1188,11 +1185,11 @@ pub fn init() void {
     idt_entries[255] = create_entry(@as(u32, @ptrToInt(&irq255)));
 
     // Load IDT
-    var idt = stack.allocator.create(idtr) catch unreachable;
-    stack.allocated_bytes += @sizeOf(idtr);
+    var idt_address = pmm.allocate(@sizeOf(idtr));
+    var idt = @intToPtr(*idtr, idt_address);
 
-    idt.size = (IDT_ENTRIES * @sizeOf(idt_entry)) - 1;
-    idt.offset = @as(u32, @ptrToInt(&idt_entries[0]));
+    idt.size = idt_entries_size - 1;
+    idt.offset = @as(u32, idt_entries_address);
 
-    load_idt(@ptrToInt(idt));
+    load_idt(@as(u32, idt_address));
 }

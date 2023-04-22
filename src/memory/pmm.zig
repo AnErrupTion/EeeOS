@@ -84,10 +84,15 @@ fn div_round_up(a: usize, b: usize) usize {
 }
 
 pub fn init(max_memory_address: usize, memory_map: [*]multiboot.MultibootMemoryMapEntry, memory_map_length: usize) void {
-    // Find all available memory map entries
-    const memory_maps = stack.allocator.alloc(map, memory_map_length) catch unreachable;
+    // Get a temporary fixed buffer allocator for the stack
+    var fba = std.heap.FixedBufferAllocator.init(&stack.buffer);
 
-    defer stack.allocator.free(memory_maps);
+    const allocator = fba.allocator();
+
+    // Find all available memory map entries
+    const memory_maps = allocator.alloc(map, memory_map_length) catch unreachable;
+
+    defer allocator.free(memory_maps);
 
     var index: usize = 0;
 
@@ -130,9 +135,9 @@ pub fn init(max_memory_address: usize, memory_map: [*]multiboot.MultibootMemoryM
     }
 
     // Find all unavailable address ranges
-    const unavailable_address_ranges = stack.allocator.alloc(address_range, memory_map_length) catch unreachable;
+    const unavailable_address_ranges = allocator.alloc(address_range, memory_map_length) catch unreachable;
 
-    defer stack.allocator.free(unavailable_address_ranges);
+    defer allocator.free(unavailable_address_ranges);
 
     var last_memory_map: map = memory_maps[0];
     var range_size: usize = 0;

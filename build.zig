@@ -2,21 +2,25 @@ const std = @import("std");
 
 const arch = enum { unspecified, i386 };
 
-pub fn build(b: *std.build.Builder) void {
+pub fn build(b: *std.Build) void {
     var build_arch = b.option(arch, "arch", "Build for a specified architecture") orelse arch.unspecified;
 
-    const exe = b.addExecutable("EeeOS", "src/main.zig");
+    const exe = b.addExecutable(.{
+        .name = "EeeOS",
+        .root_source_file = .{ .path = "src/main.zig" },
+        .optimize = b.standardOptimizeOption(.{}),
+    });
+
     exe.code_model = std.builtin.CodeModel.kernel;
     exe.red_zone = false;
 
     exe.setLinkerScriptPath(.{ .path = "linker.ld" });
-    exe.setBuildMode(b.standardReleaseOptions());
 
     if (build_arch == arch.i386) {
         exe.addAssemblyFile("src/i386/asm/entry.s");
         exe.addAssemblyFile("src/i386/asm/helpers.s");
 
-        var target = std.zig.CrossTarget{ .cpu_arch = .i386, .os_tag = .freestanding, .abi = .none };
+        var target = std.zig.CrossTarget{ .cpu_arch = .x86, .os_tag = .freestanding, .abi = .none };
         target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.mmx));
         target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.sse));
         target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.sse2));
@@ -24,13 +28,13 @@ pub fn build(b: *std.build.Builder) void {
         target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.avx2));
         target.cpu_features_add.addFeature(@enumToInt(std.Target.x86.Feature.soft_float));
 
-        exe.setTarget(target);
+        exe.target = target;
     } else {
         std.debug.print("Unsupported architecture: {}", .{build_arch});
         return;
     }
 
-    exe.install();
+    b.installArtifact(exe);
 
     const make_iso_step = b.step("make-iso", "Create a bootable ISO image");
     make_iso_step.makeFn = make_iso;
@@ -39,17 +43,11 @@ pub fn build(b: *std.build.Builder) void {
     const run_step = b.step("run", "Runs the operating system");
     run_step.makeFn = run;
     run_step.dependOn(make_iso_step);
-
-    //const exe_tests = b.addTest("src/main.zig");
-    //exe_tests.setTarget(target);
-    //exe_tests.setBuildMode(mode);
-
-    //const test_step = b.step("test", "Run unit tests");
-    //test_step.dependOn(&exe_tests.step);
 }
 
-fn make_iso(self: *std.build.Step) !void {
+fn make_iso(self: *std.Build.Step, progress: *std.Progress.Node) !void {
     _ = self;
+    _ = progress;
 
     var current_dir = std.fs.cwd();
 
@@ -88,8 +86,9 @@ fn make_iso(self: *std.build.Step) !void {
     _ = std.ChildProcess.exec(.{ .argv = &limine_deploy_argv, .allocator = std.heap.page_allocator }) catch unreachable;
 }
 
-fn run(self: *std.build.Step) !void {
+fn run(self: *std.Build.Step, progress: *std.Progress.Node) !void {
     _ = self;
+    _ = progress;
 
     const qemu_argv = [_][]const u8{
         "qemu-system-i386",
