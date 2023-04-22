@@ -1,6 +1,9 @@
 const std = @import("std");
 const multiboot = @import("../multiboot.zig");
-const stack = @import("../stack.zig");
+
+// Currently, we take 4 KiB from the stack (our program's stack space when it's loaded into memory)
+// This is to ensure we have plenty of space for what we want to do
+export var buffer: [4 * 1024]u8 align(16) linksection(".bss") = undefined;
 
 pub const PAGE_SIZE = 4096;
 const BITMAP_UNIT_SIZE = 8;
@@ -84,8 +87,8 @@ fn div_round_up(a: usize, b: usize) usize {
 }
 
 pub fn init(max_memory_address: usize, memory_map: [*]multiboot.MultibootMemoryMapEntry, memory_map_length: usize) void {
-    // Get a temporary fixed buffer allocator for the stack
-    var fba = std.heap.FixedBufferAllocator.init(&stack.buffer);
+    // Get a temporary fixed buffer allocator for our stack space
+    var fba = std.heap.FixedBufferAllocator.init(&buffer);
 
     const allocator = fba.allocator();
 

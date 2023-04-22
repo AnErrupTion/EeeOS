@@ -1,5 +1,4 @@
 const std = @import("std");
-const stack = @import("../stack.zig");
 const terminal = @import("../terminal.zig");
 const arch = @import("../arch.zig");
 const acpi = @import("../drivers/acpi.zig");
@@ -54,6 +53,11 @@ pub fn exec() void {
 
     buffer = buffer_pointer[0..BUFFER_SIZE];
 
+    const format_buffer_size = 1024;
+
+    var format_buffer_pointer = @intToPtr([*]u8, pmm.allocate(format_buffer_size));
+    var format_buffer = format_buffer_pointer[0..format_buffer_size];
+
     while (true) {
         terminal.write("> ");
 
@@ -71,10 +75,10 @@ pub fn exec() void {
         } else if (std.mem.eql(u8, command, "clear")) {
             terminal.clear();
         } else if (std.mem.eql(u8, command, "usedram")) {
-            var format = std.fmt.bufPrint(&stack.buffer, "RAM in use: {d}K", .{pmm.pages_in_use * pmm.PAGE_SIZE / 1024}) catch unreachable;
+            var format = std.fmt.bufPrint(format_buffer, "RAM in use: {d}K", .{pmm.pages_in_use * pmm.PAGE_SIZE / 1024}) catch unreachable;
             terminal.writeLine(format);
         } else if (std.mem.eql(u8, command, "totalram")) {
-            var format = std.fmt.bufPrint(&stack.buffer, "Total usable RAM: {d}M", .{pmm.total_size / 1024 / 1024}) catch unreachable;
+            var format = std.fmt.bufPrint(format_buffer, "Total usable RAM: {d}M", .{pmm.total_size / 1024 / 1024}) catch unreachable;
             terminal.writeLine(format);
         } else if (std.mem.eql(u8, command, "shutdown")) {
             terminal.writeLine("Shutting down...");
