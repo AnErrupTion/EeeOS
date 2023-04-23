@@ -30,12 +30,8 @@ pub fn setCursor(x: usize, y: usize) void {
 }
 
 pub fn scrollUp() void {
-    var y: usize = 1;
-
-    while (y < height) : (y += 1) {
-        var x: usize = 0;
-
-        while (x < width) : (x += 1) {
+    for (1..height) |y| {
+        for (0..width) |x| {
             buffer[(y - 1) * width + x] = buffer[y * width + x];
         }
     }

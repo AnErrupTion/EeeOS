@@ -169,16 +169,15 @@ pub fn allocate(size: usize) usize {
 
     while (true) : (index += 1) {
         var unit = bitmap[index];
-        var unit_index: usize = 0;
 
-        while (unit_index < BITMAP_UNIT_SIZE) : (unit_index += 1) {
+        for (0..BITMAP_UNIT_SIZE) |j| {
             // We have allocated the required number of pages, we can safely return the buffer now.
             if (satisfied_pages == required_pages) {
                 pages_in_use += satisfied_pages;
                 return address;
             }
 
-            var mask = @intCast(u8, @as(u16, 1) << @intCast(u4, unit_index));
+            var mask = @intCast(u8, @as(u16, 1) << @intCast(u4, j));
 
             // We found a free page!
             if ((unit & mask) == 0) {
@@ -209,9 +208,8 @@ pub fn free(buffer_address: usize, size: usize) void {
 
     while (true) : (index += 1) {
         var unit = bitmap[index];
-        var unit_index: usize = 0;
 
-        while (unit_index < BITMAP_UNIT_SIZE) : (unit_index += 1) {
+        for (0..BITMAP_UNIT_SIZE) |j| {
             // We have freed the required number of pages, we can safely return now.
             if (satisfied_pages == required_pages) {
                 pages_in_use -= satisfied_pages;
@@ -220,7 +218,7 @@ pub fn free(buffer_address: usize, size: usize) void {
 
             if (address == buffer_address) {
                 satisfied_pages += 1;
-                unit &= ~(@intCast(u8, @as(u16, 1) << @intCast(u4, unit_index)));
+                unit &= ~(@intCast(u8, @as(u16, 1) << @intCast(u4, j)));
                 bitmap[index] = unit;
             } else {
                 address += PAGE_SIZE;
