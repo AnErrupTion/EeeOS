@@ -22,7 +22,7 @@ pub fn init() void {
     }
 
     // The page directory has 1024 possible entries
-    var page_directory_pages = total_pages / 4096;
+    var page_directory_pages = total_pages / PAGE_DIRECTORY_SIZE;
 
     // Map each available page table entry
     for (0..page_directory_pages) |i| {
