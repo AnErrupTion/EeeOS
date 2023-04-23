@@ -12,12 +12,8 @@ pub var backgroundColor = color.screenColor.black;
 
 pub fn clear() void {
     // Clear screen
-    var y: usize = 0;
-
-    while (y < height) : (y += 1) {
-        var x: usize = 0;
-
-        while (x < width) : (x += 1) {
+    for (0..height) |y| {
+        for (0..width) |x| {
             graphics.putCharAt(' ', foregroundColor, backgroundColor, x, y);
         }
     }

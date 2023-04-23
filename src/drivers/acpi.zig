@@ -133,10 +133,9 @@ pub fn init() void {
         var rsdp_20_struct = @intToPtr(*rsdp_20, arch.architecture.acpiRsdpAddress);
         var xsdt_struct = @intToPtr(*xsdt, @intCast(usize, rsdp_20_struct.xsdt_address));
         var length: usize = @intCast(usize, (xsdt_struct.header.length - @sizeOf(std_header)) / 8);
-        var index: usize = 0;
 
-        while (index < length) : (index += 1) {
-            var address = @intCast(usize, xsdt_struct.other_sdt_headers[index]);
+        for (0..length) |i| {
+            var address = @intCast(usize, xsdt_struct.other_sdt_headers[i]);
             var header = @intToPtr(*std_header, address);
 
             if (std.mem.eql(u8, header.signature[0..4], "FACP")) {
@@ -153,10 +152,9 @@ pub fn init() void {
 
         var rsdt_struct = @intToPtr(*rsdt, rsdp_struct.rsdt_address);
         var length: usize = @intCast(usize, (rsdt_struct.header.length - @sizeOf(std_header)) / 4);
-        var index: usize = 0;
 
-        while (index < length) : (index += 1) {
-            var address = rsdt_struct.other_sdt_headers[index];
+        for (0..length) |i| {
+            var address = rsdt_struct.other_sdt_headers[i];
             var header = @intToPtr(*std_header, address);
 
             if (std.mem.eql(u8, header.signature[0..4], "FACP")) {

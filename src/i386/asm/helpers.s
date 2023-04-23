@@ -23,3 +23,22 @@ load_idt:
     mov 4(%esp), %eax
     lidt (%eax)
     ret
+
+.global load_page_directory
+.type load_page_directory, @function
+.align 4
+
+load_page_directory:
+    mov 4(%esp), %eax
+    mov %eax, %cr3
+    ret
+
+.global enable_paging
+.type enable_paging, @function
+.align 4
+
+enable_paging:
+    mov %cr0, %eax
+    or $0x80000000, %eax
+    mov %eax, %cr0
+    ret

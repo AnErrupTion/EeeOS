@@ -25,46 +25,41 @@ fn initialize_bitmap(best_map_address: usize, unavailable_address_range: []addre
     bitmap = @intToPtr([*]allowzero volatile bitmap_unit, best_map_address);
 
     // Initialize bitmap by marking unavailable pages as "allocated", else setting them free
-    var index: usize = 0;
     var address: usize = 0;
 
-    while (index < bitmap_size) : (index += 1) {
+    for (0..bitmap_size) |i| {
         var unit: bitmap_unit = 0;
-        var unit_index: usize = 0;
 
-        while (unit_index < BITMAP_UNIT_SIZE) : (unit_index += 1) {
-            var size_index: usize = 0;
-
-            while (size_index < size) : (size_index += 1) {
-                var range = unavailable_address_range[size_index];
+        for (0..BITMAP_UNIT_SIZE) |j| {
+            for (0..size) |k| {
+                var range = unavailable_address_range[k];
 
                 // The address is in an unavailable range, mark it as "allocated"
                 if (address > range.from and address < range.to) {
-                    unit |= @intCast(u8, @as(u16, 1) << @intCast(u4, unit_index));
+                    unit |= @intCast(u8, @as(u16, 1) << @intCast(u4, j));
                 }
             }
 
             address += PAGE_SIZE;
         }
 
-        bitmap[index] = unit;
+        bitmap[i] = unit;
     }
 
     // Reserve number_of_pages pages for bitmap, in the bitmap itself
     var satisfied_pages: usize = 0;
-    index = 0;
+    var index: usize = 0;
 
     while (true) : (index += 1) {
         var unit = bitmap[index];
-        var unit_index: usize = 0;
 
-        while (unit_index < BITMAP_UNIT_SIZE) : (unit_index += 1) {
+        for (0..BITMAP_UNIT_SIZE) |j| {
             // We have allocated the required number of pages, we can safely return the buffer now.
             if (satisfied_pages == number_of_pages) {
                 return;
             }
 
-            var mask = @intCast(u8, @as(u16, 1) << @intCast(u4, unit_index));
+            var mask = @intCast(u8, @as(u16, 1) << @intCast(u4, j));
 
             // We found a free page!
             if ((unit & mask) == 0) {
@@ -97,10 +92,8 @@ pub fn init(max_memory_address: usize, memory_map: [*]multiboot.MultibootMemoryM
 
     defer allocator.free(memory_maps);
 
-    var index: usize = 0;
-
-    while (index < memory_map_length) : (index += 1) {
-        var entry = memory_map[index];
+    for (0..memory_map_length) |i| {
+        var entry = memory_map[i];
 
         // See https://en.wikipedia.org/wiki/PCI_hole
         if (entry.type == 1 and entry.address <= max_memory_address) { // Available && writable
@@ -121,8 +114,6 @@ pub fn init(max_memory_address: usize, memory_map: [*]multiboot.MultibootMemoryM
     // Find a memory map for bitmap
     var best_map: map = undefined;
     var found_map = false;
-
-    index = 0;
 
     for (memory_maps) |map_entry| {
         if (bitmap_size <= map_entry.size) {
@@ -145,11 +136,9 @@ pub fn init(max_memory_address: usize, memory_map: [*]multiboot.MultibootMemoryM
     var last_memory_map: map = memory_maps[0];
     var range_size: usize = 0;
 
-    index = 1;
-
     if (number_of_maps > 1) {
-        while (index < number_of_maps) : (index += 1) {
-            var mem_map = memory_maps[index];
+        for (1..number_of_maps) |i| {
+            var mem_map = memory_maps[i];
             var range = address_range{ .from = last_memory_map.address + last_memory_map.size, .to = mem_map.address };
 
             unavailable_address_ranges[range_size] = range;
