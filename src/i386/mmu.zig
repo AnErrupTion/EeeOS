@@ -1,3 +1,4 @@
+const std = @import("std");
 const pmm = @import("../memory/pmm.zig");
 
 const PAGE_DIRECTORY_SIZE = 1024;
@@ -10,26 +11,39 @@ pub fn init() void {
     var page_directory_address = pmm.allocate(PAGE_DIRECTORY_SIZE * @sizeOf(u32));
     var page_directory_pointer = @intToPtr([*]u32, page_directory_address);
 
-    // Mark each page table entry as "not present"
-    for (0..PAGE_DIRECTORY_SIZE) |i| {
-        page_directory_pointer[i] = 2;
-    }
-
-    // One page table maps 4 MiB of RAM
-    var page_table_address = pmm.allocate(PAGE_TABLE_SIZE * @sizeOf(u32));
-    var page_table_pointer = @intToPtr([*]u32, page_table_address);
-
     // Start address, here it's 0
     var address: usize = 0;
 
-    for (0..PAGE_TABLE_SIZE) |i| {
-        // The "3" here means "Supervisor level, Read/Write and Present"
-        page_table_pointer[i] = (@as(u32, address) * 0x1000) | 3;
-        address += 1;
+    // Align the number of total pages to a 4096-byte boundary
+    var total_pages = pmm.total_pages;
+
+    while (total_pages % 4096 != 0) {
+        total_pages += 1;
     }
 
-    // Set the first page table entry in the page directory
-    page_directory_pointer[0] = @as(u32, page_table_address) | 3;
+    // The page directory has 1024 possible entries
+    var page_directory_pages = total_pages / 4096;
+
+    // Map each available page table entry
+    for (0..page_directory_pages) |i| {
+        // One page table maps 4 MiB of RAM
+        var page_table_address = pmm.allocate(PAGE_TABLE_SIZE * @sizeOf(u32));
+        var page_table_pointer = @intToPtr([*]u32, page_table_address);
+
+        for (0..PAGE_TABLE_SIZE) |j| {
+            // The "3" here means "Supervisor level, Read/Write and Present"
+            page_table_pointer[j] = (@as(u32, address) * 0x1000) | 3;
+            address += 1;
+        }
+
+        // Set the first page table entry in the page directory
+        page_directory_pointer[i] = @as(u32, page_table_address) | 3;
+    }
+
+    // Mark every other entry as "not present"
+    for (page_directory_pages..PAGE_DIRECTORY_SIZE) |i| {
+        page_directory_pointer[i] = 2;
+    }
 
     // Load the page directory address and enable paging
     load_page_directory(page_directory_address);

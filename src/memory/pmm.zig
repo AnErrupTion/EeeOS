@@ -15,7 +15,7 @@ const address_range = struct { from: usize, to: usize };
 var bitmap: [*]allowzero volatile bitmap_unit = undefined;
 
 var number_of_maps: usize = 0;
-var total_pages: usize = 0;
+pub var total_pages: usize = 0;
 var bitmap_size: usize = 0;
 var number_of_pages: usize = 0;
 pub var pages_in_use: usize = 0;
