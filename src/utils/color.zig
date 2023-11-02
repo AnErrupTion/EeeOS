@@ -1,4 +1,4 @@
-pub const screenColor = enum(u8) {
+pub const ScreenColor = enum(u8) {
     black = 0,
     blue,
     green,

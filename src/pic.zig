@@ -1,4 +1,4 @@
-const port = @import("port.zig");
+const port = @import("utils/port.zig");
 
 // Master PIC
 const PIC1_COMMAND = 0x0020;
@@ -26,8 +26,8 @@ const ICW4_SFNM = 0x10;
 
 pub fn remap(offset1: u8, offset2: u8) void {
     // Save masks
-    var a1 = port.inb(PIC1_DATA);
-    var a2 = port.inb(PIC2_DATA);
+    const a1 = port.inb(PIC1_DATA);
+    const a2 = port.inb(PIC2_DATA);
 
     // Start the initialization sequence (in cascade mode)
     port.outb(PIC1_COMMAND, ICW1_INIT | ICW1_ICW4);
@@ -72,10 +72,7 @@ pub fn disable() void {
 
 pub fn sendEoi(irq: u8) void {
     // One PIC can only handle 8 IRQs
-    if (irq >= 8) {
-        port.outb(PIC2_COMMAND, PIC_EOI);
-    }
-
+    if (irq >= 8) port.outb(PIC2_COMMAND, PIC_EOI);
     port.outb(PIC1_COMMAND, PIC_EOI);
 }
 
@@ -90,7 +87,7 @@ pub fn setIrqMask(irq: u8) void {
         intr -= 8;
     }
 
-    var value = port.inb(portq) | @intCast(u8, @as(u16, 1) << @intCast(u4, intr));
+    const value = port.inb(portq) | @as(u8, @intCast(@as(u16, 1) << @as(u4, @intCast(intr))));
     port.outb(portq, value);
 }
 
@@ -105,6 +102,6 @@ pub fn clearIrqMask(irq: u8) void {
         intr -= 8;
     }
 
-    var value = port.inb(portq) & ~@intCast(u8, @as(u16, 1) << @intCast(u4, intr));
+    const value = port.inb(portq) & ~@as(u8, @intCast(@as(u16, 1) << @as(u4, @intCast(intr))));
     port.outb(portq, value);
 }

@@ -1,5 +1,6 @@
 const std = @import("std");
-const multiboot = @import("../multiboot.zig");
+const multiboot = @import("../utils/multiboot.zig");
+const vga = @import("../vga.zig");
 
 // Currently, we take 4 KiB from the stack (our program's stack space when it's loaded into memory)
 // This is to ensure we have plenty of space for what we want to do
@@ -7,38 +8,41 @@ export var buffer: [4 * 1024]u8 align(16) linksection(".bss") = undefined;
 
 pub const PAGE_SIZE = 4096;
 const BITMAP_UNIT_SIZE = 8;
-const bitmap_unit = u8;
+const BitmapUnit = u8;
 
-const map = struct { address: usize, size: usize };
-const address_range = struct { from: usize, to: usize };
+const Map = struct { address: usize, size: usize };
+const AddressRange = struct { from: usize, to: usize };
 
-var bitmap: [*]allowzero volatile bitmap_unit = undefined;
+var bitmap: [*]allowzero volatile BitmapUnit = undefined;
 
-var number_of_maps: usize = 0;
 pub var total_pages: usize = 0;
 var bitmap_size: usize = 0;
 var number_of_pages: usize = 0;
 pub var pages_in_use: usize = 0;
 pub var total_size: usize = 0;
 
-fn initialize_bitmap(best_map_address: usize, unavailable_address_range: []address_range, size: usize) void {
-    bitmap = @intToPtr([*]allowzero volatile bitmap_unit, best_map_address);
+fn initialize_bitmap(best_map_address: usize, memory_maps: []Map, number_of_maps: usize) void {
+    bitmap = @ptrFromInt(best_map_address);
 
     // Initialize bitmap by marking unavailable pages as "allocated", else setting them free
     var address: usize = 0;
 
     for (0..bitmap_size) |i| {
-        var unit: bitmap_unit = 0;
+        var unit: BitmapUnit = 0;
 
         for (0..BITMAP_UNIT_SIZE) |j| {
-            for (0..size) |k| {
-                var range = unavailable_address_range[k];
+            const mask: u8 = @intCast(@as(u16, 1) << @as(u4, @intCast(j)));
+            var address_free = false;
 
-                // The address is in an unavailable range, mark it as "allocated"
-                if (address > range.from and address < range.to) {
-                    unit |= @intCast(u8, @as(u16, 1) << @intCast(u4, j));
-                }
+            for (0..number_of_maps) |k| {
+                if (address_free) break;
+
+                const range = memory_maps[k];
+                if (address >= range.address and address <= range.address + range.size) address_free = true;
             }
+
+            // The address is in an unavailable range, mark it as "allocated"
+            if (!address_free) unit |= mask;
 
             address += PAGE_SIZE;
         }
@@ -55,20 +59,17 @@ fn initialize_bitmap(best_map_address: usize, unavailable_address_range: []addre
 
         for (0..BITMAP_UNIT_SIZE) |j| {
             // We have allocated the required number of pages, we can safely return the buffer now.
-            if (satisfied_pages == number_of_pages) {
-                return;
-            }
+            if (satisfied_pages == number_of_pages) return;
 
-            var mask = @intCast(u8, @as(u16, 1) << @intCast(u4, j));
+            const mask: u8 = @intCast(@as(u16, 1) << @as(u4, @intCast(j)));
 
-            // We found a free page!
             if ((unit & mask) == 0) {
+                // We found a free page!
                 satisfied_pages += 1;
                 unit |= mask;
                 bitmap[index] = unit;
-            }
-            // This should never happen
-            else {
+            } else {
+                // This should never happen
                 std.debug.panic("[pmm] found allocated page while trying to allocate bitmap", .{});
                 return;
             }
@@ -81,75 +82,54 @@ fn div_round_up(a: usize, b: usize) usize {
     return (a + (b - 1)) / b;
 }
 
-pub fn init(max_memory_address: usize, memory_map: [*]multiboot.MultibootMemoryMapEntry, memory_map_length: usize) void {
+pub fn init(max_memory_address: usize, entries: [*]multiboot.MultibootMemoryMapEntry, entry_count: usize) void {
     // Get a temporary fixed buffer allocator for our stack space
     var fba = std.heap.FixedBufferAllocator.init(&buffer);
 
     const allocator = fba.allocator();
 
-    // Find all available memory map entries
-    const memory_maps = allocator.alloc(map, memory_map_length) catch unreachable;
-
+    const memory_maps = allocator.alloc(Map, entry_count) catch unreachable;
     defer allocator.free(memory_maps);
 
-    for (0..memory_map_length) |i| {
-        var entry = memory_map[i];
+    var number_of_maps: usize = 0;
+    var best_map: Map = undefined;
+    var found_map = false;
+
+    // Find all available memory map entries
+    for (0..entry_count) |i| {
+        const entry = entries[i];
 
         // See https://en.wikipedia.org/wiki/PCI_hole
         if (entry.type == 1 and entry.address <= max_memory_address) { // Available && writable
-            var current_map = map{ .address = @intCast(usize, entry.address), .size = @intCast(usize, entry.size) };
+            const size: usize = @intCast(entry.length);
+            const map = Map{ .address = @intCast(entry.address), .size = size };
 
-            memory_maps[number_of_maps] = current_map;
-
+            memory_maps[number_of_maps] = map;
             number_of_maps += 1;
-            total_size += @intCast(usize, entry.size);
+            total_size += size;
+
+            // Calculate the required values
+            total_pages = total_size / PAGE_SIZE;
+            bitmap_size = div_round_up(total_pages, BITMAP_UNIT_SIZE);
+
+            // Check if the current memory map is the best suited for the bitmap
+            if (!found_map and bitmap_size <= size) {
+                best_map = map;
+                found_map = true;
+            }
         }
     }
 
-    // Calculate the required values
-    total_pages = total_size / PAGE_SIZE;
-    bitmap_size = div_round_up(total_pages, BITMAP_UNIT_SIZE);
+    // Calculate the rest of the values
     number_of_pages = div_round_up(bitmap_size, PAGE_SIZE);
-
-    // Find a memory map for bitmap
-    var best_map: map = undefined;
-    var found_map = false;
-
-    for (memory_maps) |map_entry| {
-        if (bitmap_size <= map_entry.size) {
-            best_map = map_entry;
-            found_map = true;
-            break;
-        }
-    }
 
     if (!found_map) {
         std.debug.panic("[pmm] not enough memory to initialize", .{});
         return;
     }
 
-    // Find all unavailable address ranges
-    const unavailable_address_ranges = allocator.alloc(address_range, memory_map_length) catch unreachable;
-
-    defer allocator.free(unavailable_address_ranges);
-
-    var last_memory_map: map = memory_maps[0];
-    var range_size: usize = 0;
-
-    if (number_of_maps > 1) {
-        for (1..number_of_maps) |i| {
-            var mem_map = memory_maps[i];
-            var range = address_range{ .from = last_memory_map.address + last_memory_map.size, .to = mem_map.address };
-
-            unavailable_address_ranges[range_size] = range;
-            last_memory_map = mem_map;
-
-            range_size += 1;
-        }
-    }
-
-    // Initialize the bitmap with the memory map (and the unavailable address range) we found
-    initialize_bitmap(best_map.address, unavailable_address_ranges, range_size);
+    // Initialize the bitmap with the memory map we found
+    initialize_bitmap(best_map.address, memory_maps, number_of_maps);
 
     // At this point, we are using number_of_pages pages
     pages_in_use = number_of_pages;
@@ -158,11 +138,9 @@ pub fn init(max_memory_address: usize, memory_map: [*]multiboot.MultibootMemoryM
 pub fn allocate(size: usize) usize {
     // Calculate the required values
     var sz = size;
-    while (sz % PAGE_SIZE != 0) {
-        sz += 1;
-    }
+    while (sz % PAGE_SIZE != 0) sz += 1;
 
-    var required_pages = sz / PAGE_SIZE;
+    const required_pages = sz / PAGE_SIZE;
     var satisfied_pages: usize = 0;
     var index: usize = 0;
     var address: usize = 0;
@@ -177,16 +155,15 @@ pub fn allocate(size: usize) usize {
                 return address;
             }
 
-            var mask = @intCast(u8, @as(u16, 1) << @intCast(u4, j));
+            var mask = @as(u8, @intCast(@as(u16, 1) << @as(u4, @intCast(j))));
 
-            // We found a free page!
             if ((unit & mask) == 0) {
+                // We found a free page!
                 satisfied_pages += 1;
                 unit |= mask;
                 bitmap[index] = unit;
-            }
-            // Either we still didn't find a free page, or the next page is allocated.
-            else {
+            } else {
+                // Either we still didn't find a free page, or the next page is allocated.
                 address += PAGE_SIZE;
                 satisfied_pages = 0;
             }
@@ -197,11 +174,9 @@ pub fn allocate(size: usize) usize {
 pub fn free(buffer_address: usize, size: usize) void {
     // Calculate the required values
     var sz = size;
-    while (sz % PAGE_SIZE != 0) {
-        sz += 1;
-    }
+    while (sz % PAGE_SIZE != 0) sz += 1;
 
-    var required_pages = sz / PAGE_SIZE;
+    const required_pages = sz / PAGE_SIZE;
     var satisfied_pages: usize = 0;
     var index: usize = 0;
     var address: usize = 0;
@@ -218,11 +193,9 @@ pub fn free(buffer_address: usize, size: usize) void {
 
             if (address == buffer_address) {
                 satisfied_pages += 1;
-                unit &= ~(@intCast(u8, @as(u16, 1) << @intCast(u4, j)));
+                unit &= ~(@as(u8, @intCast(@as(u16, 1) << @as(u4, @intCast(j)))));
                 bitmap[index] = unit;
-            } else {
-                address += PAGE_SIZE;
-            }
+            } else address += PAGE_SIZE;
         }
     }
 }

@@ -1,8 +1,9 @@
 const std = @import("std");
-const arch = @import("../arch.zig");
-const terminal = @import("../terminal.zig");
+const multiboot = @import("../utils/multiboot.zig");
+const vga = @import("../vga.zig");
+const port = @import("../utils/port.zig");
 
-const rsdp = extern struct {
+pub const rsdp = extern struct {
     signature: [8]u8 align(1),
     checksum: u8 align(1),
     oem_id: [6]u8 align(1),
@@ -10,7 +11,7 @@ const rsdp = extern struct {
     rsdt_address: u32 align(1),
 };
 
-const rsdp_20 = extern struct {
+pub const rsdp_20 = extern struct {
     base: rsdp align(1),
 
     length: u32 align(1),
@@ -125,42 +126,40 @@ var fadt_struct: *fadt = undefined;
 var initialized = false;
 
 pub fn init() void {
-    var rsdp_struct = @intToPtr(*rsdp, arch.architecture.acpiRsdpAddress);
+    if (multiboot.acpiVersion2) {
+        vga.writeLine("[acpi] detected version 2.0+");
 
-    if (rsdp_struct.revision != 0) {
-        terminal.writeLine("[acpi] detected version 2.0+");
-
-        var rsdp_20_struct = @intToPtr(*rsdp_20, arch.architecture.acpiRsdpAddress);
-        var xsdt_struct = @intToPtr(*xsdt, @intCast(usize, rsdp_20_struct.xsdt_address));
-        var length: usize = @intCast(usize, (xsdt_struct.header.length - @sizeOf(std_header)) / 8);
+        const xsdt_address: usize = @intCast(multiboot.acpiNewRsdp.xsdt_address);
+        const xsdt_struct: *xsdt = @ptrFromInt(xsdt_address);
+        const length: usize = @intCast((xsdt_struct.header.length - @sizeOf(std_header)) / 8);
 
         for (0..length) |i| {
-            var address = @intCast(usize, xsdt_struct.other_sdt_headers[i]);
-            var header = @intToPtr(*std_header, address);
+            const address: usize = @intCast(xsdt_struct.other_sdt_headers[i]);
+            const header: *std_header = @ptrFromInt(address);
 
             if (std.mem.eql(u8, header.signature[0..4], "FACP")) {
-                terminal.writeLine("[acpi] found fadt");
+                vga.writeLine("[acpi] found fadt");
 
-                fadt_struct = @intToPtr(*fadt, address);
+                fadt_struct = @ptrFromInt(address);
                 initialized = true;
 
                 break;
             }
         }
     } else {
-        terminal.writeLine("[acpi] detected version 1.0");
+        vga.writeLine("[acpi] detected version 1.0");
 
-        var rsdt_struct = @intToPtr(*rsdt, rsdp_struct.rsdt_address);
-        var length: usize = @intCast(usize, (rsdt_struct.header.length - @sizeOf(std_header)) / 4);
+        const rsdt_struct: *rsdt = @ptrFromInt(multiboot.acpiOldRsdp.rsdt_address);
+        const length: usize = @intCast((rsdt_struct.header.length - @sizeOf(std_header)) / 4);
 
         for (0..length) |i| {
-            var address = rsdt_struct.other_sdt_headers[i];
-            var header = @intToPtr(*std_header, address);
+            const address = rsdt_struct.other_sdt_headers[i];
+            const header: *std_header = @ptrFromInt(address);
 
             if (std.mem.eql(u8, header.signature[0..4], "FACP")) {
-                terminal.writeLine("[acpi] found fadt");
+                vga.writeLine("[acpi] found fadt");
 
-                fadt_struct = @intToPtr(*fadt, address);
+                fadt_struct = @ptrFromInt(address);
                 initialized = true;
 
                 break;
@@ -171,27 +170,27 @@ pub fn init() void {
 
 pub fn enable() void {
     if (!initialized) {
-        terminal.writeLine("[acpi] enable not supported");
+        vga.writeLine("[acpi] enable not supported");
         return;
     }
 
-    arch.port.outb(@truncate(u16, fadt_struct.smi_command_port), fadt_struct.acpi_enable);
-    while ((arch.port.inw(@truncate(u16, fadt_struct.pm1a_control_block)) & 1) == 0) {} // Wait for ACPI to be enabled
+    port.outb(@truncate(fadt_struct.smi_command_port), fadt_struct.acpi_enable);
+    while ((port.inw(@truncate(fadt_struct.pm1a_control_block)) & 1) == 0) {} // Wait for ACPI to be enabled
 }
 
 pub fn disable() void {
     if (!initialized) {
-        terminal.writeLine("[acpi] disable not supported");
+        vga.writeLine("[acpi] disable not supported");
         return;
     }
 
-    arch.port.outb(@truncate(u16, fadt_struct.smi_command_port), fadt_struct.acpi_disable);
-    while ((arch.port.inw(@truncate(u16, fadt_struct.pm1a_control_block)) & 1) != 0) {} // Wait for ACPI to be disabled
+    port.outb(@truncate(fadt_struct.smi_command_port), fadt_struct.acpi_disable);
+    while ((port.inw(@truncate(fadt_struct.pm1a_control_block)) & 1) != 0) {} // Wait for ACPI to be disabled
 }
 
 pub fn shutdown() void {
     if (!initialized) {
-        terminal.writeLine("[acpi] shutdown not supported");
+        vga.writeLine("[acpi] shutdown not supported");
         return;
     }
 
@@ -200,19 +199,19 @@ pub fn shutdown() void {
 
 pub fn reset() void {
     if (!initialized) {
-        terminal.writeLine("[acpi] reset not supported");
+        vga.writeLine("[acpi] reset not supported");
         return;
     }
 
     if (fadt_struct.header.revision < 2) {
-        terminal.writeLine("[acpi] reset not supported due to old version");
+        vga.writeLine("[acpi] reset not supported due to old version");
         return;
     }
 
     if ((fadt_struct.flags & (1 << 10)) == 0) {
-        terminal.writeLine("[acpi] reset not supported due to feature not supported");
+        vga.writeLine("[acpi] reset not supported due to feature not supported");
         return;
     }
 
-    arch.port.outb(@truncate(u16, fadt_struct.reset_reg.address), fadt_struct.reset_value);
+    port.outb(@truncate(fadt_struct.reset_reg.address), fadt_struct.reset_value);
 }

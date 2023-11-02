@@ -1,19 +1,19 @@
 const std = @import("std");
-const terminal = @import("../terminal.zig");
-const arch = @import("../arch.zig");
+const vga = @import("../vga.zig");
+const ps2 = @import("../ps2.zig");
 const acpi = @import("../drivers/acpi.zig");
 const pmm = @import("../memory/pmm.zig");
 const scanmap = @import("../utils/scanmap.zig");
 
-const BUFFER_SIZE = 1024;
+const BUFFER_SIZE = 4096;
 
-var buffer: []u8 = undefined;
+var buffer: [BUFFER_SIZE]u8 = undefined;
 
 fn read_line() usize {
     var index: usize = 0;
 
     while (true) {
-        var scan_code = arch.keyboard.getScanCode();
+        var scan_code = ps2.getScanCode();
 
         if (scan_code == 0) {
             continue;
@@ -21,51 +21,45 @@ fn read_line() usize {
 
         var key = scanmap.getKey(scan_code);
 
-        if (key.type == scanmap.key_type.unknown) {
+        if (key.type == .unknown) {
             continue;
         }
 
-        if (key.type == scanmap.key_type.backspace) {
+        if (key.type == .backspace) {
             if (index > 0) {
                 index -= 1;
                 buffer[index] = ' ';
-                terminal.backspace();
+                vga.backspace();
             }
 
             continue;
         }
 
-        if (key.type == scanmap.key_type.enter) {
-            terminal.newLine();
+        if (key.type == .enter) {
+            vga.newLine();
             return index;
         }
 
         buffer[index] = key.value;
-        terminal.putChar(key.value);
+        vga.putChar(key.value);
 
         index += 1;
     }
 }
 
 pub fn exec() void {
-    var buffer_address = pmm.allocate(BUFFER_SIZE);
-    var buffer_pointer = @intToPtr([*]u8, buffer_address);
-
-    buffer = buffer_pointer[0..BUFFER_SIZE];
-
     const format_buffer_size = 1024;
 
-    var format_buffer_pointer = @intToPtr([*]u8, pmm.allocate(format_buffer_size));
-    var format_buffer = format_buffer_pointer[0..format_buffer_size];
+    var format_buffer: [format_buffer_size]u8 = undefined;
 
     while (true) {
-        terminal.write("> ");
+        vga.write("> ");
 
         var size = read_line();
         var command = buffer[0..size];
 
         if (std.mem.eql(u8, command, "help")) {
-            terminal.writeLine(
+            vga.writeLine(
                 \\help - Shows all commands.
                 \\usedram - Shows the amount of used RAM, in KiB.
                 \\totalram - Shows the total amount of usable RAM, in MiB.
@@ -73,22 +67,22 @@ pub fn exec() void {
                 \\reset - Resets the computer via ACPI.
             );
         } else if (std.mem.eql(u8, command, "clear")) {
-            terminal.clear();
+            vga.clear();
         } else if (std.mem.eql(u8, command, "usedram")) {
-            var format = std.fmt.bufPrint(format_buffer, "RAM in use: {d}K", .{pmm.pages_in_use * pmm.PAGE_SIZE / 1024}) catch unreachable;
-            terminal.writeLine(format);
+            var format = std.fmt.bufPrint(&format_buffer, "RAM in use: {d} kiB", .{pmm.pages_in_use * pmm.PAGE_SIZE / 1024}) catch unreachable;
+            vga.writeLine(format);
         } else if (std.mem.eql(u8, command, "totalram")) {
-            var format = std.fmt.bufPrint(format_buffer, "Total usable RAM: {d}M", .{pmm.total_size / 1024 / 1024}) catch unreachable;
-            terminal.writeLine(format);
+            var format = std.fmt.bufPrint(&format_buffer, "Total usable RAM: {d} MiB", .{pmm.total_size / 1024 / 1024}) catch unreachable;
+            vga.writeLine(format);
         } else if (std.mem.eql(u8, command, "shutdown")) {
-            terminal.writeLine("Shutting down...");
+            vga.writeLine("Shutting down...");
             acpi.shutdown();
         } else if (std.mem.eql(u8, command, "reset")) {
-            terminal.writeLine("Resetting...");
+            vga.writeLine("Resetting...");
             acpi.reset();
         } else {
-            terminal.write("Unknown command: ");
-            terminal.writeLine(command);
+            vga.write("Unknown command: ");
+            vga.writeLine(command);
         }
     }
 }

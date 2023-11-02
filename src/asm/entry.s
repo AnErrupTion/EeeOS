@@ -1,6 +1,6 @@
 .global _start
 .type _start, @function
-.align 4
+.align 8
 
 _start:
     mov $0x80000, %esp

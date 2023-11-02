@@ -1,10 +1,6 @@
 const std = @import("std");
 
-const arch = enum { unspecified, i386 };
-
 pub fn build(b: *std.Build) void {
-    var build_arch = b.option(arch, "arch", "Build for a specified architecture") orelse arch.unspecified;
-
     const exe = b.addExecutable(.{
         .name = "EeeOS",
         .root_source_file = .{ .path = "src/main.zig" },
@@ -16,23 +12,18 @@ pub fn build(b: *std.Build) void {
 
     exe.setLinkerScriptPath(.{ .path = "linker.ld" });
 
-    if (build_arch == arch.i386) {
-        exe.addAssemblyFile("src/i386/asm/entry.s");
-        exe.addAssemblyFile("src/i386/asm/helpers.s");
+    exe.addAssemblyFile(.{ .path = "src/asm/entry.s" });
+    exe.addAssemblyFile(.{ .path = "src/asm/helpers.s" });
 
-        var target = std.zig.CrossTarget{ .cpu_arch = .x86, .os_tag = .freestanding, .abi = .none };
-        target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.mmx));
-        target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.sse));
-        target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.sse2));
-        target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.avx));
-        target.cpu_features_sub.addFeature(@enumToInt(std.Target.x86.Feature.avx2));
-        target.cpu_features_add.addFeature(@enumToInt(std.Target.x86.Feature.soft_float));
+    var target = std.zig.CrossTarget{ .cpu_arch = .x86, .os_tag = .freestanding, .abi = .none };
+    target.cpu_features_sub.addFeature(@intFromEnum(std.Target.x86.Feature.mmx));
+    target.cpu_features_sub.addFeature(@intFromEnum(std.Target.x86.Feature.sse));
+    target.cpu_features_sub.addFeature(@intFromEnum(std.Target.x86.Feature.sse2));
+    target.cpu_features_sub.addFeature(@intFromEnum(std.Target.x86.Feature.avx));
+    target.cpu_features_sub.addFeature(@intFromEnum(std.Target.x86.Feature.avx2));
+    target.cpu_features_add.addFeature(@intFromEnum(std.Target.x86.Feature.soft_float));
 
-        exe.target = target;
-    } else {
-        std.debug.print("Unsupported architecture: {}", .{build_arch});
-        return;
-    }
+    exe.target = target;
 
     b.installArtifact(exe);
 
@@ -49,15 +40,14 @@ fn make_iso(self: *std.Build.Step, progress: *std.Progress.Node) !void {
     _ = self;
     _ = progress;
 
-    var current_dir = std.fs.cwd();
-
+    const current_dir = std.fs.cwd();
     current_dir.makeDir("iso") catch {};
 
     var isoDirectory = current_dir.openDir("iso", std.fs.Dir.OpenDirOptions{}) catch unreachable;
     defer isoDirectory.close();
 
-    current_dir.copyFile("limine/limine-cd.bin", isoDirectory, "limine-cd.bin", std.fs.CopyFileOptions{}) catch unreachable;
-    current_dir.copyFile("limine/limine.sys", isoDirectory, "limine.sys", std.fs.CopyFileOptions{}) catch unreachable;
+    current_dir.copyFile("limine/limine-bios-cd.bin", isoDirectory, "limine-bios-cd.bin", std.fs.CopyFileOptions{}) catch unreachable;
+    current_dir.copyFile("limine/limine-bios.sys", isoDirectory, "limine-bios.sys", std.fs.CopyFileOptions{}) catch unreachable;
     current_dir.copyFile("limine/limine.cfg", isoDirectory, "limine.cfg", std.fs.CopyFileOptions{}) catch unreachable;
     current_dir.copyFile("zig-out/bin/EeeOS", isoDirectory, "EeeOS.elf", std.fs.CopyFileOptions{}) catch unreachable;
 
@@ -66,7 +56,7 @@ fn make_iso(self: *std.Build.Step, progress: *std.Progress.Node) !void {
         "-as",
         "mkisofs",
         "-b",
-        "limine-cd.bin",
+        "limine-bios-cd.bin",
         "-no-emul-boot",
         "-boot-load-size",
         "4",
@@ -79,7 +69,7 @@ fn make_iso(self: *std.Build.Step, progress: *std.Progress.Node) !void {
     _ = std.ChildProcess.exec(.{ .argv = &xorriso_argv, .allocator = std.heap.page_allocator }) catch unreachable;
 
     const limine_deploy_argv = [_][]const u8{
-        "limine/limine-deploy",
+        "limine/limine",
         "EeeOS.iso",
     };
 
@@ -94,7 +84,6 @@ fn run(self: *std.Build.Step, progress: *std.Progress.Node) !void {
         "qemu-system-i386",
         "-cpu",
         "pentium2",
-        "-enable-kvm",
         "-m",
         "128M",
         "-cdrom",

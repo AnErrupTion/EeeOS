@@ -1,8 +1,12 @@
 const std = @import("std");
-const multiboot = @import("multiboot.zig");
-const terminal = @import("terminal.zig");
+const vga = @import("vga.zig");
+const multiboot = @import("utils/multiboot.zig");
 const pmm = @import("memory/pmm.zig");
-const arch = @import("arch.zig");
+const mmu = @import("mmu.zig");
+const gdt = @import("gdt.zig");
+const idt = @import("idt.zig");
+const pic = @import("pic.zig");
+const ps2 = @import("ps2.zig");
 const acpi = @import("drivers/acpi.zig");
 const shell = @import("apps/shell.zig");
 
@@ -12,30 +16,47 @@ pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace, siz:
 
     @setCold(true);
 
-    terminal.write("PANIC: ");
-    terminal.write(msg);
+    vga.write("PANIC: ");
+    vga.write(msg);
 
     while (true) {}
 }
 
-export fn kmain(multiboot_info: *const multiboot.MultibootInfo) noreturn {
-    terminal.init();
+export fn kmain(multiboot_info_address: usize) noreturn {
+    asm volatile ("cli");
 
-    terminal.writeLine("[pmm] init");
-    pmm.init(multiboot_info.memory_upper * 1024, multiboot_info.memory_map, multiboot_info.memory_map_length);
+    vga.clear();
 
-    terminal.writeLine("[arch] init");
-    arch.architecture.init();
+    vga.writeLine("[multiboot] init");
+    multiboot.init(multiboot_info_address);
 
-    if (arch.architecture.acpiRsdpAddress != undefined) {
-        terminal.writeLine("[acpi] init");
-        acpi.init();
+    vga.writeLine("[pmm] init");
+    pmm.init(multiboot.memoryUpper * 1024, multiboot.entries, multiboot.entryCount);
 
-        terminal.writeLine("[acpi] enable");
-        acpi.enable();
-    }
+    vga.writeLine("[mmu] init");
+    mmu.init();
 
-    terminal.writeLine("[shell] exec");
+    vga.writeLine("[gdt] init");
+    gdt.init();
+
+    vga.writeLine("[idt] init");
+    idt.init();
+
+    vga.writeLine("[pic] init");
+    pic.init();
+
+    vga.writeLine("[ps2] init");
+    ps2.init();
+
+    vga.writeLine("[acpi] init");
+    acpi.init();
+
+    vga.writeLine("[acpi] enable");
+    acpi.enable();
+
+    asm volatile ("sti");
+
+    vga.writeLine("[shell] exec");
     shell.exec();
 
     while (true) {}
